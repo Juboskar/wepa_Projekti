@@ -1,8 +1,7 @@
-
 package projekti;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,19 +18,24 @@ public class SignupController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @GetMapping("/signup")
-    public String list(Model model) {
+    @GetMapping("/welcome")
+    public String helloWorld(Model model) {
         return "signup";
     }
 
-    @PostMapping("/signup")
+    @GetMapping("/redirectlogin")
+    public String signup() {
+        return "redirect:/welcome";
+    }
+
+    @PostMapping("/welcome")
     public String add(@RequestParam String username, @RequestParam String password) {
         if (accountRepository.findByUsername(username) != null) {
-            return "redirect:/signup";
+            return "redirect:/welcome";
         }
         Account a = new Account(username, passwordEncoder.encode(password));
         accountRepository.save(a);
-        return "redirect:/signup";
+        return "redirect:/welcome";
     }
 
 }

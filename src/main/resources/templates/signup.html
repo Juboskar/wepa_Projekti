@@ -4,14 +4,57 @@
         <meta charset="UTF-8" />
         <title>Signup</title>
     </head>
-    <body>
-
-        <h1>Tervetuloa Mezä Someen (Beta)</h1>
-        <h2>Rekisteröidy</h2>
-        <form method="POST" th:action="@{/signup}">
-            <input type="text" name="username"/>
-            <input type="password" name="password"/>
-            <input type="submit" value="Rekisteröidy"/>
-        </form>
+    <body> 
+        <div class="container">
+            <div class="row"> 
+                <div class="col-12">
+                    <h1>Tervetuloa Contact Äppylään (Beta)</h1>
+                </div>
+            </div>
+        </div>
+        <div class="container" sec:authorize="isAnonymous()">
+            <div class="row">
+                <div class="col-12">
+                    <h2>Rekisteröidy</h2>
+                </div>
+            </div>
+            <form method="POST" th:action="@{/welcome}">
+                <div class="row">
+                    <div class="col-3">
+                        <input type="text" name="username" placeholder="Username" class="form-control"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <input type="password" name="password" placeholder="Password" class="form-control" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <input type="submit" value="Rekisteröidy" class="btn btn-primary"/>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-12">
+                    <p> 
+                        Onko sinulla jo tunnukset? 
+                        <a th:href="@{/redirectlogin}">Kirjaudu sisään täältä!</a><br/>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="container" sec:authorize="isAuthenticated()">
+            <div class="row">
+                <div class="col-10"> 
+                    Olet kirjautuneena! 
+                </div>
+                <div class="col-2">
+                    <form action="/logout">
+                        <input type="submit" value="Kirjaudu ulos" class="btn btn-primary"/>
+                    </form>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
