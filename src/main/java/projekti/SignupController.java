@@ -1,7 +1,6 @@
 package projekti;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SignupController {
 
     @Autowired
-    AccountRepository accountRepository;
+    AccountService accountService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -30,11 +29,7 @@ public class SignupController {
 
     @PostMapping("/welcome")
     public String add(@RequestParam String username, @RequestParam String password) {
-        if (accountRepository.findByUsername(username) != null) {
-            return "redirect:/welcome";
-        }
-        Account a = new Account(username, passwordEncoder.encode(password));
-        accountRepository.save(a);
+        accountService.save(username, passwordEncoder.encode(password));
         return "redirect:/welcome";
     }
 
