@@ -7,6 +7,11 @@
     <body>
 
         <h1>Tervetuloa Mezä Someen (Beta)</h1>
-        <p>Tämä on kirjautumissivu</p>
+        <h2>Rekisteröidy</h2>
+        <form method="POST" th:action="@{/signup}">
+            <input type="text" name="username"/>
+            <input type="password" name="password"/>
+            <input type="submit" value="Rekisteröidy"/>
+        </form>
     </body>
 </html>

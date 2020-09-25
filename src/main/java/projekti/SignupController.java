@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class AccountController {
+public class SignupController {
 
     @Autowired
     AccountRepository accountRepository;
@@ -29,7 +29,6 @@ public class AccountController {
         if (accountRepository.findByUsername(username) != null) {
             return "redirect:/signup";
         }
-        
         Account a = new Account(username, passwordEncoder.encode(password));
         accountRepository.save(a);
         return "redirect:/signup";
