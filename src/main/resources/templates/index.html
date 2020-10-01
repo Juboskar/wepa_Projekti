@@ -21,42 +21,57 @@
             <div class="row">
                 <div class="col-12">
                     <p>Käyttäjätunnus (username) ja salasana (password) ovat kirjautumistietojasi, jotka eivät näy muille.
-                    Nimi (name) ja polku (path) ovat tietoja, joiden avulla muut käyttäjät voivat löytää käyttäjätilisi 
-                    (tämä toiminto ei tosin vielä ole saatavilla sovelluksen tässä versiossa).</p>
+                        Nimi (name) ja polku (path) ovat tietoja, joiden avulla muut käyttäjät voivat löytää käyttäjätilisi 
+                        (tämä toiminto ei tosin vielä ole saatavilla sovelluksen tässä versiossa).</p>
                 </div>
             </div>
+
             <form method="POST" th:action="@{/welcome}" th:object="${accountDto}">
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-6">
                         <input th:field="*{username}" type="text" placeholder="Username" class="form-control"/>
                     </div>
-                    <div class="col-3"  th:if="${#fields.hasErrors('username')}" th:errors="*{username}">virhe</div>
                 </div>
+
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-6"  th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+                        virhe
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
                         <input th:field="*{password}" type="password" placeholder="Password" class="form-control" />
                     </div>
-                    <div class="col-3" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">virhe</div>
+                </div>
+                <div class="row">
+                    <div class="col-6" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">virhe</div>
                 </div>
 
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-6">
                         <input th:field="*{name}" type="text" placeholder="Name" class="form-control" />
                     </div>
-                    <div class="col-3" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">virhe</div>
+                </div>
+                <div class="row">
+                    <div class="col-6" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">virhe</div>
                 </div>
 
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-6">
                         <input th:field="*{userpath}" type="text" placeholder="Path" class="form-control" />
                     </div>
-                    <div class="col-3" th:if="${#fields.hasErrors('userpath')}" th:errors="*{userpath}">virhe</div>
+                </div>
+                <div class="row">
+                    <div class="col-6" th:if="${#fields.hasErrors('userpath')}" th:errors="*{userpath}">virhe</div>
                 </div>
 
                 <div class="row">
                     <div class="col-3">
                         <input type="submit" value="Rekisteröidy" class="btn btn-primary"/>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-3">
                         <p th:text="${message}">Message</p>
                     </div>
@@ -65,7 +80,7 @@
             <div class="row">
                 <div class="col-12">
                     <p> 
-                        Onko sinulla jo käyttäjätunnus? 
+                        Onko sinulla jo tunnukset? 
                         <a th:href="@{/redirectlogin}">Kirjaudu sisään täältä!</a><br/>
                     </p>
                 </div>
