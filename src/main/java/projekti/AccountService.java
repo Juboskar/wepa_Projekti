@@ -13,10 +13,12 @@ public class AccountService {
         return accountRepository.findByUsername(username);
     }
 
-    public void save(String username, String encodedPassword) {
+    public boolean save(String username, String encodedPassword) {
         if (accountRepository.findByUsername(username) == null) {
             Account a = new Account(username, encodedPassword);
             accountRepository.save(a);
+            return true;
         }
+        return false;
     }
 }

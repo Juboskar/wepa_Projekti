@@ -18,22 +18,24 @@
                     <h2>Rekisteröidy</h2>
                 </div>
             </div>
-            <form method="POST" th:action="@{/welcome}">
+            <form method="POST" th:action="@{/welcome}" th:object="${accountdto}">
                 <div class="row">
                     <div class="col-3">
-                        <input type="text" name="username" placeholder="Username" class="form-control"/>
+                        <input th:field="*{username}" type="text" placeholder="Username" class="form-control"/>
                     </div>
+                    <div class="col-3"  th:if="${#fields.hasErrors('username')}" th:errors="*{username}">virhe</div>
                 </div>
                 <div class="row">
                     <div class="col-3">
-                        <input type="password" name="password" placeholder="Password" class="form-control" />
+                        <input th:field="*{password}" type="password" placeholder="Password" class="form-control" />
                     </div>
+                    <div class="col-3" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">virhe</div>
                 </div>
                 <div class="row">
                     <div class="col-3">
                         <input type="submit" value="Rekisteröidy" class="btn btn-primary"/>
                     </div>
-                </div>
+                       </div>
             </form>
             <div class="row">
                 <div class="col-12">
