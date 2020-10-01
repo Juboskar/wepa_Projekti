@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package projekti;
 
 import javax.persistence.Entity;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,9 +15,13 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 public class AccountDto extends AbstractPersistable<Long> {
 
     @Size(min = 5, max = 30)
-    @NotEmpty
     private String username;
     @ValidPassword
     private String password;
-
+    @Size(min = 5, max = 30)
+    private String name;
+    @Pattern(regexp="^[a-z]*$",message = "Path must contain only alphabets a-z")
+    @Size(min = 5, max = 30)
+    private String userpath;
+    
 }

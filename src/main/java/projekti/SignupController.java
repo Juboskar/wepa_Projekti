@@ -4,7 +4,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,7 +19,7 @@ public class SignupController {
     PasswordEncoder passwordEncoder;
 
     @GetMapping("/welcome")
-    public String helloWorld(@ModelAttribute("accountdto") AccountDto accountdto) {
+    public String helloWorld(@ModelAttribute("accountDto") AccountDto accountDto) {
         return "signup";
     }
 
@@ -30,14 +29,19 @@ public class SignupController {
     }
 
     @PostMapping("/welcome")
-    public String add(@Valid @ModelAttribute("accountdto") AccountDto accountDto, BindingResult bindingResult) {
+    public String add(
+            @Valid @ModelAttribute("accountDto") AccountDto accountDto,
+            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "signup";
         }
-        if (accountService.save(accountDto.getUsername(),
-                passwordEncoder.encode(accountDto.getPassword()))) {
+        if (accountService.save(
+                accountDto.getUsername(),
+                passwordEncoder.encode(accountDto.getPassword()),
+                accountDto.getName(),
+                accountDto.getUserpath())) {
             return "registersucces";
         }
-        return "redirect:/welcome";
+        return "signup";
     }
 }

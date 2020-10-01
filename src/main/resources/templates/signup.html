@@ -18,7 +18,7 @@
                     <h2>Rekisteröidy</h2>
                 </div>
             </div>
-            <form method="POST" th:action="@{/welcome}" th:object="${accountdto}">
+            <form method="POST" th:action="@{/welcome}" th:object="${accountDto}">
                 <div class="row">
                     <div class="col-3">
                         <input th:field="*{username}" type="text" placeholder="Username" class="form-control"/>
@@ -31,6 +31,21 @@
                     </div>
                     <div class="col-3" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">virhe</div>
                 </div>
+                
+                 <div class="row">
+                    <div class="col-3">
+                        <input th:field="*{name}" type="text" placeholder="Name" class="form-control" />
+                    </div>
+                    <div class="col-3" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">virhe</div>
+                </div>
+                
+                 <div class="row">
+                    <div class="col-3">
+                        <input th:field="*{userpath}" type="text" placeholder="Path" class="form-control" />
+                    </div>
+                    <div class="col-3" th:if="${#fields.hasErrors('userpath')}" th:errors="*{userpath}">virhe</div>
+                </div>
+                
                 <div class="row">
                     <div class="col-3">
                         <input type="submit" value="Rekisteröidy" class="btn btn-primary"/>

@@ -13,9 +13,9 @@ public class AccountService {
         return accountRepository.findByUsername(username);
     }
 
-    public boolean save(String username, String encodedPassword) {
+    public boolean save(String username, String encodedPassword, String name, String path) {
         if (accountRepository.findByUsername(username) == null) {
-            Account a = new Account(username, encodedPassword);
+            Account a = new Account(username, encodedPassword, name, path);
             accountRepository.save(a);
             return true;
         }
