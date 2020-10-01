@@ -18,6 +18,13 @@
                     <h2>Rekisteröidy</h2>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-12">
+                    <p>Käyttäjätunnus (username) ja salasana (password) ovat kirjautumistietojasi, jotka eivät näy muille.
+                    Nimi (name) ja polku (path) ovat tietoja, joiden avulla muut käyttäjät voivat löytää käyttäjätilisi 
+                    (tämä toiminto ei tosin vielä ole saatavilla sovelluksen tässä versiossa).</p>
+                </div>
+            </div>
             <form method="POST" th:action="@{/welcome}" th:object="${accountDto}">
                 <div class="row">
                     <div class="col-3">
@@ -31,31 +38,34 @@
                     </div>
                     <div class="col-3" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">virhe</div>
                 </div>
-                
-                 <div class="row">
+
+                <div class="row">
                     <div class="col-3">
                         <input th:field="*{name}" type="text" placeholder="Name" class="form-control" />
                     </div>
                     <div class="col-3" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">virhe</div>
                 </div>
-                
-                 <div class="row">
+
+                <div class="row">
                     <div class="col-3">
                         <input th:field="*{userpath}" type="text" placeholder="Path" class="form-control" />
                     </div>
                     <div class="col-3" th:if="${#fields.hasErrors('userpath')}" th:errors="*{userpath}">virhe</div>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-3">
                         <input type="submit" value="Rekisteröidy" class="btn btn-primary"/>
                     </div>
-                       </div>
+                    <div class="col-3">
+                        <p th:text="${message}">Message</p>
+                    </div>
+                </div>
             </form>
             <div class="row">
                 <div class="col-12">
                     <p> 
-                        Onko sinulla jo tunnukset? 
+                        Onko sinulla jo käyttäjätunnus? 
                         <a th:href="@{/redirectlogin}">Kirjaudu sisään täältä!</a><br/>
                     </p>
                 </div>
@@ -64,11 +74,19 @@
         <div class="container" sec:authorize="isAuthenticated()">
             <div class="row">
                 <div class="col-10"> 
-                    Olet kirjautuneena! 
+                    <p> Olet kirjautuneena! </p> 
                 </div>
                 <div class="col-2">
                     <form action="/logout">
                         <input type="submit" value="Kirjaudu ulos" class="btn btn-primary"/>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-10"></div>
+                <div class="col-2">
+                    <form action="/deleteaccount">
+                        <input type="submit" value="Poista tili" class="btn btn-primary"/>
                     </form>
                 </div>
             </div>

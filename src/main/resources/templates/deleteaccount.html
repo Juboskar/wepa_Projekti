@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/layout :: head" lang="en">
+        <meta charset="UTF-8" />
+        <title>Delete Account</title>
+    </head>
+    <body> 
+        <div class="container">
+            <div class="row">
+                <div class="col-12"> 
+                    <p>Vahvista tilisi poistaminen. Sen jälkeen sinut ohjataan uloskirjautumaan viimeisen kerran!</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <form action="/deleteaccountconfirmed">
+                        <input type="submit" value="Poista tili" class="btn btn-primary"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
