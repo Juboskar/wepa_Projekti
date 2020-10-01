@@ -88,7 +88,7 @@
         </div>
         <div class="container" sec:authorize="isAuthenticated()">
             <div class="row">
-                <div class="col-9"> 
+                <div class="col-6"> 
                     <p> Olet kirjautuneena! </p> 
                 </div>
                 <div class="col-3">
@@ -96,9 +96,6 @@
                         <input type="submit" value="Kirjaudu ulos" class="btn btn-primary"/>
                     </form>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-9"></div>
                 <div class="col-3">
                     <form action="/deleteaccount">
                         <input type="submit" value="Poista tili" class="btn btn-primary"/>
