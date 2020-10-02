@@ -8,9 +8,12 @@
         <header th:replace="fragments/layout :: header">
             <p>menu</p>
         </header>
-        <div class="row">
-            <div class="col-12">
-                <p>Täällä voit myöhemmin nähdä kaverilistasi</p>
+        <div class="container">
+            <div th:replace="fragments/layout :: h1(text='Kaverit')"></div>
+            <div class="row">
+                <div class="col-12">
+                    <p>Täällä voit myöhemmin nähdä kaverilistasi</p>
+                </div>
             </div>
         </div>
     </body>

@@ -29,5 +29,10 @@
                 </ul>
             </nav>
         </header>
+        <div th:fragment="h1(text)" class="row">
+            <div class="col-12">
+                <h1 th:text="${text}">Otsikko</h1>
+            </div>
+        </div>
     </body>
 </html>

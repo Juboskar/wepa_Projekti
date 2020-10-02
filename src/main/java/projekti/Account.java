@@ -24,9 +24,9 @@ public class Account extends AbstractPersistable<Long> {
 //    @OneToMany
 //    private List<Account> friends;
 //    @OneToMany
-//    private List<Account> sendRequests;
+//    private List<Post> posts;
 //    @OneToMany
-//    private List<Account> waitingRequests;
+//    private List<Skill> skills;
 //    @Lob
 //    @Basic(fetch = FetchType.LAZY)
 //    private byte[] profilepic;
