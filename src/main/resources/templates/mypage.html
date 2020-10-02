@@ -13,6 +13,11 @@
                 <p>Voit muokata omaa sivuasi myöhemmin täällä</p>
             </div>
         </div>
+        <div>
+            <div class="col-12">
+                <a th:text="${path}" th:href="@{|/kayttajat/${path}|}">Linkki sivuusi</a><br/>
+            </div>
+        </div>
     </body>
 </html>
 
