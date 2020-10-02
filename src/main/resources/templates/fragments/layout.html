@@ -6,7 +6,28 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
     </head>
-    <body>
 
+    <body>
+        <header th:fragment="header" sec:authorize="isAuthenticated()">
+            <nav class="navbar navbar-expand-sm bg-light navbar-light">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/welcome}">Tervetuloa!</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/mypage}">Oma sivu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/friends}">Kaverit</a>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/logout}">Kirjaudu ulos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/deleteaccount}">Poista tili</a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
     </body>
 </html>

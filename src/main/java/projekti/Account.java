@@ -1,8 +1,11 @@
 package projekti;
 
+import java.util.List;
+import javax.persistence.Basic;
 import javax.persistence.Entity;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.persistence.FetchType;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +20,15 @@ public class Account extends AbstractPersistable<Long> {
     private String username;
     private String password;
     private String name;
-    private String path;
-    
+    private String userpath;
+//    @OneToMany
+//    private List<Account> friends;
+//    @OneToMany
+//    private List<Account> sendRequests;
+//    @OneToMany
+//    private List<Account> waitingRequests;
+//    @Lob
+//    @Basic(fetch = FetchType.LAZY)
+//    private byte[] profilepic;
+
 }
