@@ -2,6 +2,7 @@ package projekti;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,6 +52,7 @@ public class AccountService {
 
     }
 
+    @Transactional
     public byte[] getPicture(String path) {
         Account a = accountRepository.findByUserpath(path);
         return a.getProfilepic();
