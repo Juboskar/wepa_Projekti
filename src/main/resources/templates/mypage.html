@@ -12,7 +12,15 @@
             <div th:replace="fragments/layout :: h1(text='Oma sivu')"></div>
             <div class="row">
                 <div class="col-12">
-                    <p>Voit muokata omaa sivuasi myöhemmin täällä</p>
+                    <form th:action="@{/files}" method="POST" enctype="multipart/form-data">
+                        <input type="file" name="file" />
+                        <input type="submit" value="Lisää profiilikuva!"/>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <img th:src="@{/kayttajat/{path}/profilepic(path=${path})}" width="200" height="200">
                 </div>
             </div>
             <div>

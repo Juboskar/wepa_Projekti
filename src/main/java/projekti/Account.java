@@ -25,10 +25,10 @@ public class Account extends AbstractPersistable<Long> {
 //    private List<Account> friends;
 //    @OneToMany
 //    private List<Post> posts;
-//    @OneToMany
-//    private List<Skill> skills;
-//    @Lob
-//    @Basic(fetch = FetchType.LAZY)
-//    private byte[] profilepic;
+// @OneToMany(mappedBy = "account")
+// private List<Skill> skills;
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] profilepic;
 
 }
