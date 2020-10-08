@@ -21,12 +21,7 @@ public class Account extends AbstractPersistable<Long> {
     private String password;
     private String name;
     private String userpath;
-//    @OneToMany
-//    private List<Account> friends;
-//    @OneToMany
-//    private List<Post> posts;
-// @OneToMany(mappedBy = "account")
-// private List<Skill> skills;
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] profilepic;
