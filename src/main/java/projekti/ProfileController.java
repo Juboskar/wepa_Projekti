@@ -45,7 +45,6 @@ public class ProfileController {
         return "userpage";
     }
 
-    @Transactional
     @GetMapping(path = "/kayttajat/{path}/profilepic", produces = "image/*")
     @ResponseBody
     public byte[] get(@PathVariable String path) {
