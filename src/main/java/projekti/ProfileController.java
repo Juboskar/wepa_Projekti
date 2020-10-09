@@ -56,4 +56,12 @@ public class ProfileController {
         accountService.savePicture(file);
         return "redirect:/mypage";
     }
+    
+     @GetMapping("/deletepicture")
+    public String deletePicture() {
+        accountService.deleteProfilePicture();
+        return "redirect:/mypage";
+    }
+    
+    
 }

@@ -57,4 +57,11 @@ public class AccountService {
         Account a = accountRepository.findByUserpath(path);
         return a.getProfilepic();
     }
+
+    public void deleteProfilePicture() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        a.setProfilepic(null);
+        accountRepository.save(a);
+    }
 }

@@ -20,7 +20,16 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <img th:src="@{/kayttajat/{path}/profilepic(path=${path})}" width="200" height="200">
+                    <a th:href="@{|/kayttajat/${path}/profilepic|}">
+                        <img th:src="@{/kayttajat/{path}/profilepic(path=${path})}" width="200" height="200">
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <form action="/deletepicture">
+                        <input type="submit" value="Poista profiilikuva" class="btn btn-primary"/>
+                    </form>
                 </div>
             </div>
             <div>
