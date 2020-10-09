@@ -24,11 +24,13 @@
                 </div>
             </div>
             <div>
-                <div class="col-12">
-                    <p>
-                        Linkki muille näkyvään sivuusi:
-                        <a th:text="${path}" th:href="@{|/kayttajat/${path}|}">Linkki</a><br/>
-                    </p>
+                <div class="row">
+                    <div class="col-12">
+                        <p>
+                            Linkki muille näkyvään sivuusi:
+                            <a th:text="@{|/kayttajat/${path}|}" th:href="@{|/kayttajat/${path}|}">Linkki</a><br/>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
