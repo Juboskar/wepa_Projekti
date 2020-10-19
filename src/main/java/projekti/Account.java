@@ -1,5 +1,6 @@
 package projekti;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -25,10 +26,12 @@ public class Account extends AbstractPersistable<Long> {
     @Basic(fetch = FetchType.LAZY)
     private byte[] profilepic;
 
-    //    @OneToMany
-//    private List<Account> friends;
-//    @OneToMany
-//    private List<Post> posts;
-// @OneToMany(mappedBy = "account")
-// private List<Skill> skills;
+    @OneToMany
+    private List<Account> friends = new ArrayList<>();
+
+    @OneToMany
+    private List<Account> sended = new ArrayList<>();
+
+    @OneToMany
+    private List<Account> waiting = new ArrayList<>();
 }

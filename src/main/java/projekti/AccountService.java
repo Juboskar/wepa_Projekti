@@ -2,9 +2,9 @@ package projekti;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,4 +64,50 @@ public class AccountService {
         a.setProfilepic(null);
         accountRepository.save(a);
     }
+
+    public List<ProfileDto> findFriends() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        List<ProfileDto> friends = new ArrayList<>();
+        a.getFriends().stream().map((b) -> {
+            ProfileDto profile = new ProfileDto();
+            profile.setName(b.getName());
+            profile.setUserpath(b.getUserpath());
+            return profile;
+        }).forEachOrdered((profile) -> {
+            friends.add(profile);
+        });
+        return friends;
+    }
+
+    public List<ProfileDto> findWaiting() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        List<ProfileDto> waiting = new ArrayList<>();
+        a.getWaiting().stream().map((b) -> {
+            ProfileDto profile = new ProfileDto();
+            profile.setName(b.getName());
+            profile.setUserpath(b.getUserpath());
+            return profile;
+        }).forEachOrdered((profile) -> {
+            waiting.add(profile);
+        });
+        return waiting;
+    }
+
+    public List<ProfileDto> findSended() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        List<ProfileDto> sended = new ArrayList<>();
+        a.getSended().stream().map((b) -> {
+            ProfileDto profile = new ProfileDto();
+            profile.setName(b.getName());
+            profile.setUserpath(b.getUserpath());
+            return profile;
+        }).forEachOrdered((profile) -> {
+            sended.add(profile);
+        });
+        return sended;
+    }
+
 }

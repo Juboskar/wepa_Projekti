@@ -10,11 +10,37 @@
         </header>
         <div class="container">
             <div th:replace="fragments/layout :: h1(text='Kaverit')"></div>
-            <div class="row">
-                <div class="col-12">
-                    <p>Täällä voit myöhemmin nähdä kaverilistasi</p>
-                </div>
-            </div>
         </div>
+
+        <section class="container">
+            <h2>Kaverilistasi:</h2>
+            <table class="table">
+                <tr th:each="friend : ${friends}">
+                    <th> <a th:text="${friend.name}" th:href="@{|/kayttajat/${friend.userpath}|}">Linkki</a><br/> </th>
+                    <th> <button class="btn btn-primary">Poista kavereista</button> </th>
+                </tr>
+            </table>
+        </section>
+
+        <section class="container">
+            <h2>Odottavat pyynnöt: </h2>
+            <table class="table">
+                <tr th:each="friend : ${waiting}">
+                    <th> <a th:text="${friend.name}" th:href="@{|/kayttajat/${friend.userpath}|}">Linkki</a><br/> </th>
+                    <th> <button class="btn btn-primary">Hyväksy</button> </th>
+                    <th> <button class="btn btn-primary">Hylkää</button> </th>
+                </tr>
+            </table>
+        </section>
+
+        <section class="container">
+            <h2>Lähettämäsi pyynnöt:</h2>
+            <table class="table">
+                <tr th:each="friend : ${sended}">
+                    <th> <a th:text="${friend.name}" th:href="@{|/kayttajat/${friend.userpath}|}">Linkki</a><br/> </th>
+                    <th> <button class="btn btn-primary">Peruuta pyyntö</button> </th>
+                </tr>
+            </table>
+        </section>
     </body>
 </html>
