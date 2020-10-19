@@ -63,4 +63,9 @@ public class ProfileController {
         return "redirect:/mypage";
     }
 
+    @PostMapping("/searchresults")
+    public String search(@RequestParam String name, Model model) {
+        model.addAttribute("results", accountService.findByName(name));
+        return "search";
+    }
 }

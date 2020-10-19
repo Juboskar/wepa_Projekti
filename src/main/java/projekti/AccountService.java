@@ -110,4 +110,17 @@ public class AccountService {
         return sended;
     }
 
+    public List<ProfileDto> findByName(String name) {
+        List<Account> accounts = accountRepository.findAllByName(name);
+        List<ProfileDto> results = new ArrayList<>();
+        accounts.stream().map((a) -> {
+            ProfileDto profile = new ProfileDto();
+            profile.setName(a.getName());
+            profile.setUserpath(a.getUserpath());
+            return profile;
+        }).forEachOrdered((profile) -> {
+            results.add(profile);
+        });
+        return results;
+    }
 }
