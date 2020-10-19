@@ -64,6 +64,7 @@ public class AccountService {
         accountRepository.save(a);
     }
 
+    @Transactional
     public List<ProfileDto> findFriends() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
@@ -79,6 +80,7 @@ public class AccountService {
         return friends;
     }
 
+    @Transactional
     public List<ProfileDto> findWaiting() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
@@ -94,6 +96,7 @@ public class AccountService {
         return waiting;
     }
 
+    @Transactional
     public List<ProfileDto> findSended() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
@@ -109,6 +112,7 @@ public class AccountService {
         return sended;
     }
 
+    @Transactional
     public List<ProfileDto> findByName(String name) {
         List<Account> accounts = accountRepository.findAllByName(name);
         List<ProfileDto> results = new ArrayList<>();
