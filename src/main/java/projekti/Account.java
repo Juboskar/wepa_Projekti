@@ -23,9 +23,6 @@ public class Account extends AbstractPersistable<Long> {
     private String password;
     private String name;
     private String userpath;
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] profilepic;
 
     @ManyToMany
     private List<Account> friends = new ArrayList<>();
@@ -35,4 +32,8 @@ public class Account extends AbstractPersistable<Long> {
 
     @ManyToMany
     private List<Account> waiting = new ArrayList<>();
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] profilepic;
 }

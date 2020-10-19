@@ -123,6 +123,7 @@ public class AccountService {
         return results;
     }
 
+    @Transactional
     public String sendRequest(String path) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
