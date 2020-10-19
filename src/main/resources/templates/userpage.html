@@ -21,6 +21,14 @@
                     <h1><span th:text="${name}">name</span></h1>
                 </div>
             </div>
+            <form th:action="@{|/kayttajat/${path}/sendrequest|}">
+                <input type="submit" value="Lähetä kaveripyyntö" class="btn btn-primary"/>
+            </form>
+            <div class="row">
+                <div class="col-12">
+                    <p><span th:text="${text}">name</span></p>
+                </div>
+            </div>
         </div>
     </body> 
 </html>

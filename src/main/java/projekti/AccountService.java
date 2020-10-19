@@ -49,7 +49,6 @@ public class AccountService {
             a.setProfilepic(file.getBytes());
             accountRepository.save(a);
         }
-
     }
 
     @Transactional
@@ -122,5 +121,37 @@ public class AccountService {
             results.add(profile);
         });
         return results;
+    }
+
+    public String sendRequest(String path) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        Account b = accountRepository.findByUserpath(path);
+        if (a.getUsername().equals(b.getUsername())) {
+            return "Et voi lisätä itseäsi";
+        }
+
+        List<Account> aFriends = a.getFriends();
+        List<Account> aSended = a.getSended();
+        List<Account> aWaiting = a.getWaiting();
+
+        if (aFriends.contains(b)) {
+            return "Olette jo kavereita";
+        }
+        if (aSended.contains(b)) {
+            return "Olet jo lähettänyt pyynnön";
+        }
+        if (aWaiting.contains(b)) {
+            return "Käyttäjä on jo lähettänyt sinulle pyynnön. Voit hyväksyä sen kaverisivullasi";
+        }
+
+        aSended.add(b);
+        a.setSended(aSended);
+
+        List<Account> bWaiting = b.getWaiting();
+        bWaiting.add(a);
+        b.setWaiting(bWaiting);
+
+        return "Pyyntö lähetetty";
     }
 }

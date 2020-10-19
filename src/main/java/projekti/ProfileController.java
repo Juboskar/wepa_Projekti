@@ -40,6 +40,7 @@ public class ProfileController {
 
     @GetMapping("/kayttajat/{path}")
     public String users(Model model, @PathVariable String path) {
+        model.addAttribute("text", "");
         model.addAttribute("path", path);
         model.addAttribute("name", accountService.findNameByPath(path));
         return "userpage";
@@ -67,5 +68,13 @@ public class ProfileController {
     public String search(@RequestParam String name, Model model) {
         model.addAttribute("results", accountService.findByName(name));
         return "search";
+    }
+
+    @GetMapping("/kayttajat/{path}/sendrequest")
+    public String sendFriendRequest(@PathVariable String path, Model model) {
+        model.addAttribute("text", accountService.sendRequest(path));
+        model.addAttribute("path", path);
+        model.addAttribute("name", accountService.findNameByPath(path));
+        return "userpage";
     }
 }

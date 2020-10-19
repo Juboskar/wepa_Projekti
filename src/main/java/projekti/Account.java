@@ -6,6 +6,7 @@ import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,12 +27,12 @@ public class Account extends AbstractPersistable<Long> {
     @Basic(fetch = FetchType.LAZY)
     private byte[] profilepic;
 
-    @OneToMany
+    @ManyToMany
     private List<Account> friends = new ArrayList<>();
 
-    @OneToMany
+    @ManyToMany
     private List<Account> sended = new ArrayList<>();
 
-    @OneToMany
+    @ManyToMany
     private List<Account> waiting = new ArrayList<>();
 }
