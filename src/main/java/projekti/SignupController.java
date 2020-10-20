@@ -59,8 +59,7 @@ public class SignupController {
 
     @GetMapping("/deleteaccountconfirmed")
     public String deleteAccountConfirmed() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        accountService.deleteByUsername(auth.getName());
+        accountService.deleteAccount();
         return "redirect:/logout";
     }
 }

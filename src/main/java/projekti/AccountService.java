@@ -24,8 +24,11 @@ public class AccountService {
         return a.getName();
     }
 
-    public void deleteByUsername(String username) {
+    @Transactional
+    public void deleteAccount() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
+        //lisää tähän, että poistaa kaikki kaverit ennen accountin poistoa
         accountRepository.deleteById(a.getId());
     }
 
@@ -135,11 +138,9 @@ public class AccountService {
         if (a.getUsername().equals(b.getUsername())) {
             return "Et voi lisätä itseäsi";
         }
-
         List<Account> aFriends = a.getFriends();
         List<Account> aSended = a.getSended();
         List<Account> aWaiting = a.getWaiting();
-
         if (aFriends.contains(b)) {
             return "Olette jo kavereita";
         }
@@ -149,14 +150,11 @@ public class AccountService {
         if (aWaiting.contains(b)) {
             return "Käyttäjä on jo lähettänyt sinulle pyynnön. Voit hyväksyä sen kaverisivullasi";
         }
-
         aSended.add(b);
         a.setSended(aSended);
-
         List<Account> bWaiting = b.getWaiting();
         bWaiting.add(a);
         b.setWaiting(bWaiting);
-
         return "Pyyntö lähetetty";
     }
 }
