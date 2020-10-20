@@ -77,4 +77,28 @@ public class ProfileController {
         model.addAttribute("name", accountService.findNameByPath(path));
         return "userpage";
     }
+
+    @GetMapping("/kayttajat/{path}/accept")
+    public String acceptFriendRequest(@PathVariable String path) {
+        accountService.acceptRequest(path);
+        return "redirect:/friends";
+    }
+
+    @GetMapping("/kayttajat/{path}/reject")
+    public String rejectFriendRequest(@PathVariable String path) {
+        accountService.rejectRequest(path);
+        return "redirect:/friends";
+    }
+    
+    @GetMapping("/kayttajat/{path}/remove")
+    public String removeFriend(@PathVariable String path) {
+        accountService.removeFriend(path);
+        return "redirect:/friends";
+    }
+    
+    @GetMapping("/kayttajat/{path}/cancel")
+    public String cancelFriendRequest(@PathVariable String path) {
+        accountService.cancelFriend(path);
+        return "redirect:/friends";
+    }
 }

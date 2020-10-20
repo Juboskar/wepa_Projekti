@@ -2,6 +2,7 @@ package projekti;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,25 @@ public class AccountService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
         //lisää tähän, että poistaa kaikki kaverit ennen accountin poistoa
+        List<Account> aFriends = a.getFriends();
+        List<Account> cloned_aFriends = new ArrayList<Account>(aFriends);
+
+        for (Account b : cloned_aFriends) {
+            this.removeFriend(b.getUserpath());
+        }
+
+        List<Account> aSended = a.getSended();
+        List<Account> cloned_aSended = new ArrayList<Account>(aSended);
+        for (Account b : cloned_aSended) {
+            this.cancelFriend(b.getUserpath());
+        }
+
+        List<Account> aWaiting = a.getWaiting();
+        List<Account> cloned_aWaiting = new ArrayList<Account>(aWaiting);
+        for (Account b : cloned_aWaiting) {
+            this.rejectRequest(b.getUserpath());
+        }
+
         accountRepository.deleteById(a.getId());
     }
 
@@ -155,6 +175,97 @@ public class AccountService {
         List<Account> bWaiting = b.getWaiting();
         bWaiting.add(a);
         b.setWaiting(bWaiting);
+        accountRepository.save(a);
+        accountRepository.save(b);
         return "Pyyntö lähetetty";
+    }
+
+    @Transactional
+    public void acceptRequest(String path) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        Account b = accountRepository.findByUserpath(path);
+
+        List<Account> aWaiting = a.getWaiting();
+        List<Account> bSended = b.getSended();
+
+        if (aWaiting.contains(b) & bSended.contains(a)) {
+
+            List<Account> aFriends = a.getFriends();
+            List<Account> bFriends = b.getFriends();
+
+            aFriends.add(b);
+            a.setFriends(aFriends);
+            aWaiting.remove(b);
+            a.setWaiting(aWaiting);
+            accountRepository.save(a);
+
+            bFriends.add(a);
+            b.setFriends(bFriends);
+            bSended.remove(a);
+            b.setSended(bSended);
+            accountRepository.save(b);
+        }
+    }
+
+    @Transactional
+    public void rejectRequest(String path) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        Account b = accountRepository.findByUserpath(path);
+
+        List<Account> aWaiting = a.getWaiting();
+        List<Account> bSended = b.getSended();
+
+        if (aWaiting.contains(b) & bSended.contains(a)) {
+
+            aWaiting.remove(b);
+            a.setWaiting(aWaiting);
+            accountRepository.save(a);
+
+            bSended.remove(a);
+            b.setSended(bSended);
+            accountRepository.save(b);
+        }
+    }
+
+    @Transactional
+    public void removeFriend(String path) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        Account b = accountRepository.findByUserpath(path);
+
+        List<Account> aFriends = a.getFriends();
+        List<Account> bFriends = b.getFriends();
+
+        if (aFriends.contains(b) & bFriends.contains(a)) {
+            aFriends.remove(b);
+            a.setFriends(aFriends);
+            accountRepository.save(a);
+
+            bFriends.remove(a);
+            b.setFriends(bFriends);
+            accountRepository.save(b);
+        }
+    }
+
+    public void cancelFriend(String path) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account b = accountRepository.findByUsername(username);
+        Account a = accountRepository.findByUserpath(path);
+
+        List<Account> bSended = b.getSended();
+        List<Account> aWaiting = a.getWaiting();
+
+        if (aWaiting.contains(b) & bSended.contains(a)) {
+
+            bSended.remove(a);
+            b.setSended(bSended);
+            accountRepository.save(b);
+
+            aWaiting.remove(b);
+            a.setWaiting(aWaiting);
+            accountRepository.save(a);
+        }
     }
 }

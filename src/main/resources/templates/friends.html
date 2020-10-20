@@ -17,7 +17,11 @@
             <table class="table">
                 <tr th:each="friend : ${friends}">
                     <th> <a th:text="${friend.name}" th:href="@{|/kayttajat/${friend.userpath}|}">Linkki</a><br/> </th>
-                    <th> <button class="btn btn-primary">Poista kavereista</button> </th>
+                    <th> 
+                        <form th:action="@{|/kayttajat/${friend.userpath}/remove|}">
+                            <input type="submit" value="Poista kavereista" class="btn btn-primary"/>
+                        </form>
+                    </th>
                 </tr>
             </table>
         </section>
@@ -27,8 +31,16 @@
             <table class="table">
                 <tr th:each="friend : ${waiting}">
                     <th> <a th:text="${friend.name}" th:href="@{|/kayttajat/${friend.userpath}|}">Linkki</a><br/> </th>
-                    <th> <button class="btn btn-primary">Hyväksy</button> </th>
-                    <th> <button class="btn btn-primary">Hylkää</button> </th>
+                    <th> 
+                        <form th:action="@{|/kayttajat/${friend.userpath}/accept|}">
+                            <input type="submit" value="Hyväksy" class="btn btn-primary"/>
+                        </form>
+                    </th>
+                    <th> 
+                        <form th:action="@{|/kayttajat/${friend.userpath}/reject|}">
+                            <input type="submit" value="Hylkää" class="btn btn-primary"/>
+                        </form>
+                    </th>
                 </tr>
             </table>
         </section>
@@ -38,7 +50,11 @@
             <table class="table">
                 <tr th:each="friend : ${sended}">
                     <th> <a th:text="${friend.name}" th:href="@{|/kayttajat/${friend.userpath}|}">Linkki</a><br/> </th>
-                    <th> <button class="btn btn-primary">Peruuta pyyntö</button> </th>
+                    <th> 
+                        <form th:action="@{|/kayttajat/${friend.userpath}/cancel|}">
+                            <input type="submit" value="Peruuta pyyntö" class="btn btn-primary"/>
+                        </form>
+                    </th>
                 </tr>
             </table>
         </section>
