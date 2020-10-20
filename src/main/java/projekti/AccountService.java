@@ -16,6 +16,9 @@ public class AccountService {
     @Autowired
     AccountRepository accountRepository;
 
+    @Autowired
+    SkillRepository skillRepository;
+
     public Account findByUsername(String username) {
         return accountRepository.findByUsername(username);
     }
@@ -32,7 +35,6 @@ public class AccountService {
         //lisää tähän, että poistaa kaikki kaverit ennen accountin poistoa
         List<Account> aFriends = a.getFriends();
         List<Account> cloned_aFriends = new ArrayList<Account>(aFriends);
-
         for (Account b : cloned_aFriends) {
             this.removeFriend(b.getUserpath());
         }
@@ -48,7 +50,9 @@ public class AccountService {
         for (Account b : cloned_aWaiting) {
             this.rejectRequest(b.getUserpath());
         }
-
+        
+        //lisää skillien poistaminen
+        
         accountRepository.deleteById(a.getId());
     }
 
@@ -267,5 +271,34 @@ public class AccountService {
             a.setWaiting(aWaiting);
             accountRepository.save(a);
         }
+    }
+
+    @Transactional
+    public void addSkill(String newSkill) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        Skill skill = new Skill();
+        skill.setText(newSkill);
+        skill.setOwner(a);
+        skillRepository.save(skill);
+    }
+
+    @Transactional
+    public List<SkillDto> findSkills() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+
+        List<SkillDto> skills = new ArrayList<>();
+        List<Skill> aSkills = a.getSkills();
+        aSkills.stream().map((s) -> {
+            SkillDto skillDto = new SkillDto();
+            skillDto.setText(s.getText());
+            skillDto.setLikes(s.getLikes().size());
+            return skillDto;
+        }).forEachOrdered((skillDto) -> {
+            skills.add(skillDto);
+        });
+
+        return skills;
     }
 }

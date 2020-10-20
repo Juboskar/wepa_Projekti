@@ -35,6 +35,7 @@ public class ProfileController {
     public String mypage(Model model) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         model.addAttribute("path", accountService.findByUsername(username).getUserpath());
+        model.addAttribute("skills", accountService.findSkills());
         return "mypage";
     }
 
@@ -89,16 +90,22 @@ public class ProfileController {
         accountService.rejectRequest(path);
         return "redirect:/friends";
     }
-    
+
     @GetMapping("/kayttajat/{path}/remove")
     public String removeFriend(@PathVariable String path) {
         accountService.removeFriend(path);
         return "redirect:/friends";
     }
-    
+
     @GetMapping("/kayttajat/{path}/cancel")
     public String cancelFriendRequest(@PathVariable String path) {
         accountService.cancelFriend(path);
         return "redirect:/friends";
+    }
+
+    @PostMapping("/addskill")
+    public String addSkill(@RequestParam String skill) {
+        accountService.addSkill(skill);
+        return "redirect:/mypage";
     }
 }

@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,7 +32,10 @@ public class Account extends AbstractPersistable<Long> {
 
     @ManyToMany
     private List<Account> waiting = new ArrayList<>();
-
+    
+    @OneToMany(mappedBy="owner")
+    private List<Skill> skills = new ArrayList<>();
+    
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] profilepic;
