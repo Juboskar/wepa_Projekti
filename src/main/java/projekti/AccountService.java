@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+@Transactional
 @Service
 public class AccountService {
 
@@ -253,6 +254,7 @@ public class AccountService {
         }
     }
 
+    @Transactional
     public void cancelFriend(String path) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account b = accountRepository.findByUsername(username);
