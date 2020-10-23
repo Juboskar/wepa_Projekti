@@ -36,6 +36,9 @@ public class Account extends AbstractPersistable<Long> {
     @OneToMany(mappedBy="owner")
     private List<Skill> skills = new ArrayList<>();
     
+    @ManyToMany(mappedBy="likes")
+    private List<Skill> Likedskills = new ArrayList<>();
+    
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] profilepic;

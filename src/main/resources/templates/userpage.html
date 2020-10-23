@@ -44,6 +44,16 @@
                             <th> 
                                 <span th:text="${s.likes}">Likes</span>
                             </th>
+                            <th> 
+                                <form th:action="@{|/kayttajat/${path}/likeskill/${s.text}|}">
+                                    <input type="submit" value="Kehu!" class="btn btn-primary"/>
+                                </form>
+                            </th>
+                            <th> 
+                                <form th:action="@{|/kayttajat/${path}/dislikeskill/${s.text}|}">
+                                    <input type="submit" value="Poista kehu!" class="btn btn-primary"/>
+                                </form>
+                            </th>
                         </tr>
                     </table>
                 </div>

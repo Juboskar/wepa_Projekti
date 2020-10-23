@@ -116,4 +116,18 @@ public class ProfileController {
         accountService.removeSkill(skill);
         return "redirect:/mypage";
     }
+
+    @GetMapping("/kayttajat/{path}/likeskill/{skill}")
+    public String likeSkill(@PathVariable String path, @PathVariable String skill, Model model) {
+        accountService.likeSkill(path, skill);
+        model.addAttribute("path", path);
+        return "redirect:/kayttajat/" + path;
+    }
+
+    @GetMapping("/kayttajat/{path}/dislikeskill/{skill}")
+    public String dislikeSkill(@PathVariable String path, @PathVariable String skill, Model model) {
+        accountService.dislikeSkill(path, skill);
+        model.addAttribute("path", path);
+        return "redirect:/kayttajat/" + path;
+    }
 }

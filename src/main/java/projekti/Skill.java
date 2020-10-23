@@ -21,6 +21,6 @@ public class Skill extends AbstractPersistable<Long> {
     
     private String text;
     
-    @OneToMany
+    @ManyToMany
     private List<Account> likes;
 }

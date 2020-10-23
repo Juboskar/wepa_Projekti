@@ -12,45 +12,46 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 @Service
 public class AccountService {
-    
+
     @Autowired
     AccountRepository accountRepository;
-    
+
     @Autowired
     SkillRepository skillRepository;
-    
+
     public Account findByUsername(String username) {
         return accountRepository.findByUsername(username);
     }
-    
+
     public String findNameByPath(String userpath) {
         Account a = accountRepository.findByUserpath(userpath);
         return a.getName();
     }
-    
+
     @Transactional
     public void deleteAccount() {
+        //tämän metodin voisi toteuttaa paremmin parilla muutoksella tietokantaa
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
-        //lisää tähän, että poistaa kaikki kaverit ennen accountin poistoa
+
         List<Account> aFriends = a.getFriends();
         List<Account> cloned_aFriends = new ArrayList<>(aFriends);
         for (Account b : cloned_aFriends) {
             this.removeFriend(b.getUserpath());
         }
-        
+
         List<Account> aSended = a.getSended();
         List<Account> cloned_aSended = new ArrayList<>(aSended);
         for (Account b : cloned_aSended) {
             this.cancelFriend(b.getUserpath());
         }
-        
+
         List<Account> aWaiting = a.getWaiting();
         List<Account> cloned_aWaiting = new ArrayList<>(aWaiting);
         for (Account b : cloned_aWaiting) {
             this.rejectRequest(b.getUserpath());
         }
-        
+
         List<Skill> aSkills = a.getSkills();
         List<String> strings = new ArrayList<>();
         aSkills.forEach((aSkill) -> {
@@ -60,9 +61,14 @@ public class AccountService {
             this.removeSkill(string);
         }
 
+        List<Skill> aLikedskills = a.getLikedskills();
+        for (Skill aLikedskill : aLikedskills) {
+            this.dislikeSkill(aLikedskill.getOwner().getUserpath(), aLikedskill.getText());
+        }
+        
         accountRepository.deleteById(a.getId());
     }
-    
+
     public boolean save(String username, String encodedPassword, String name, String path) {
         if (accountRepository.findByUsername(username) == null && accountRepository.findByUserpath(path) == null) {
             Account a = new Account();
@@ -75,7 +81,7 @@ public class AccountService {
         }
         return false;
     }
-    
+
     public void savePicture(MultipartFile file) throws IOException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
@@ -84,20 +90,20 @@ public class AccountService {
             accountRepository.save(a);
         }
     }
-    
+
     @Transactional
     public byte[] getPicture(String path) {
         Account a = accountRepository.findByUserpath(path);
         return a.getProfilepic();
     }
-    
+
     public void deleteProfilePicture() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
         a.setProfilepic(null);
         accountRepository.save(a);
     }
-    
+
     @Transactional
     public List<ProfileDto> findFriends() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -113,7 +119,7 @@ public class AccountService {
         });
         return friends;
     }
-    
+
     @Transactional
     public List<ProfileDto> findWaiting() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -129,7 +135,7 @@ public class AccountService {
         });
         return waiting;
     }
-    
+
     @Transactional
     public List<ProfileDto> findSended() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -145,7 +151,7 @@ public class AccountService {
         });
         return sended;
     }
-    
+
     @Transactional
     public List<ProfileDto> findByName(String name) {
         List<Account> accounts = accountRepository.findAllByName(name);
@@ -160,7 +166,7 @@ public class AccountService {
         });
         return results;
     }
-    
+
     @Transactional
     public String sendRequest(String path) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -190,27 +196,27 @@ public class AccountService {
         accountRepository.save(b);
         return "Pyyntö lähetetty";
     }
-    
+
     @Transactional
     public void acceptRequest(String path) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
-        
+
         List<Account> aWaiting = a.getWaiting();
         List<Account> bSended = b.getSended();
-        
+
         if (aWaiting.contains(b) & bSended.contains(a)) {
-            
+
             List<Account> aFriends = a.getFriends();
             List<Account> bFriends = b.getFriends();
-            
+
             aFriends.add(b);
             a.setFriends(aFriends);
             aWaiting.remove(b);
             a.setWaiting(aWaiting);
             accountRepository.save(a);
-            
+
             bFriends.add(a);
             b.setFriends(bFriends);
             bSended.remove(a);
@@ -218,80 +224,80 @@ public class AccountService {
             accountRepository.save(b);
         }
     }
-    
+
     @Transactional
     public void rejectRequest(String path) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
-        
+
         List<Account> aWaiting = a.getWaiting();
         List<Account> bSended = b.getSended();
-        
+
         if (aWaiting.contains(b) & bSended.contains(a)) {
-            
+
             aWaiting.remove(b);
             a.setWaiting(aWaiting);
             accountRepository.save(a);
-            
+
             bSended.remove(a);
             b.setSended(bSended);
             accountRepository.save(b);
         }
     }
-    
+
     @Transactional
     public void removeFriend(String path) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
-        
+
         List<Account> aFriends = a.getFriends();
         List<Account> bFriends = b.getFriends();
-        
+
         if (aFriends.contains(b) & bFriends.contains(a)) {
             aFriends.remove(b);
             a.setFriends(aFriends);
             accountRepository.save(a);
-            
+
             bFriends.remove(a);
             b.setFriends(bFriends);
             accountRepository.save(b);
         }
     }
-    
+
     @Transactional
     public void cancelFriend(String path) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account b = accountRepository.findByUsername(username);
         Account a = accountRepository.findByUserpath(path);
-        
+
         List<Account> bSended = b.getSended();
         List<Account> aWaiting = a.getWaiting();
-        
+
         if (aWaiting.contains(b) & bSended.contains(a)) {
-            
+
             bSended.remove(a);
             b.setSended(bSended);
             accountRepository.save(b);
-            
+
             aWaiting.remove(b);
             a.setWaiting(aWaiting);
             accountRepository.save(a);
         }
     }
-    
+
     @Transactional
     public void addSkill(String newSkill) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
-        
+
         List<String> strings = new ArrayList<>();
         List<Skill> aSkills = a.getSkills();
         aSkills.forEach((aSkill) -> {
             strings.add(aSkill.getText());
         });
-        
+
         if (!strings.contains(newSkill)) {
             Skill skill = new Skill();
             skill.setText(newSkill);
@@ -299,12 +305,12 @@ public class AccountService {
             skillRepository.save(skill);
         }
     }
-    
+
     @Transactional
     public List<SkillDto> findSkills() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
-        
+
         List<SkillDto> skills = new ArrayList<>();
         List<Skill> aSkills = a.getSkills();
         aSkills.stream().map((s) -> {
@@ -315,13 +321,13 @@ public class AccountService {
         }).forEachOrdered((skillDto) -> {
             skills.add(skillDto);
         });
-        
+
         return skills;
     }
-    
+
     Object findSkillsByPath(String path) {
         Account a = accountRepository.findByUserpath(path);
-        
+
         List<SkillDto> skills = new ArrayList<>();
         List<Skill> aSkills = a.getSkills();
         aSkills.stream().map((s) -> {
@@ -332,17 +338,53 @@ public class AccountService {
         }).forEachOrdered((skillDto) -> {
             skills.add(skillDto);
         });
-        
+
         return skills;
     }
-    
+
     @Transactional
     public void removeSkill(String skill) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
-        
         Skill s = skillRepository.findByOwnerAndText(a, skill);
-        skillRepository.delete(s);
+        List<Account> likes = s.getLikes();
+        List<Account> cloned_likes = new ArrayList<>(likes);
+        for (Account account : cloned_likes) {
+            this.dislikeSkill(account.getUserpath(), s.getText());
+        }
+        s.setLikes(likes);
         
+        skillRepository.delete(s);
+
+    }
+
+    @Transactional
+    public void likeSkill(String path, String skill) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        Account b = accountRepository.findByUserpath(path);
+
+        Skill s = skillRepository.findByOwnerAndText(b, skill);
+        List<Account> likes = s.getLikes();
+        if (!likes.contains(a)) {
+            likes.add(a);
+        }
+        s.setLikes(likes);
+        skillRepository.save(s);
+    }
+
+    @Transactional
+    public void dislikeSkill(String path, String skill) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        Account b = accountRepository.findByUserpath(path);
+
+        Skill s = skillRepository.findByOwnerAndText(b, skill);
+        List<Account> likes = s.getLikes();
+        if (likes.contains(a)) {
+            likes.remove(a);
+        }
+        s.setLikes(likes);
+        skillRepository.save(s);
     }
 }
