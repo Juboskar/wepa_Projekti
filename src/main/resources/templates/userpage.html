@@ -29,11 +29,23 @@
                     <p><span th:text="${text}">name</span></p>
                 </div>
             </div>
-        </div>
-        <div class="container">
+
             <div class="row">
-                <div class="row">
-                    
+                <div class="col-11">
+                    <table class="table">
+                        <thead>
+                            <th scope="col"><h4>Taito</h4></th>
+                            <th scope="col"><h4>Kehut</h4></th>
+                        </thead>
+                        <tr th:each="s : ${skills}">
+                            <th> 
+                                <span th:text="${s.text}">Skill</span>
+                            </th>
+                            <th> 
+                                <span th:text="${s.likes}">Likes</span>
+                            </th>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>

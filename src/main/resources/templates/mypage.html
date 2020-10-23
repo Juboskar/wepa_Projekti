@@ -8,74 +8,77 @@
         <header th:replace="fragments/layout :: header">
             <p>menu</p>
         </header>
-        <div class="parent-container d-flex">
 
-            <div class="container">
-                <div th:replace="fragments/layout :: h1(text='Oma sivu')"></div>
+        <div class="container">
+            <div th:replace="fragments/layout :: h1(text='Oma sivu')"></div>
+            <div class="row">
+                <div class="col-12">
+                    <form th:action="@{/files}" method="POST" enctype="multipart/form-data">
+                        <input type="file" name="file"/>
+                        <input type="submit" value="Lisää profiilikuva!" class="btn btn-primary"/>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <a th:href="@{|/kayttajat/${path}/profilepic|}">
+                        <img th:src="@{/kayttajat/{path}/profilepic(path=${path})}" width="200" height="200">
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <form action="/deletepicture">
+                        <input type="submit" value="Poista profiilikuva" class="btn btn-primary"/>
+                    </form>
+                </div>
+            </div>
+            <div>
                 <div class="row">
                     <div class="col-12">
-                        <form th:action="@{/files}" method="POST" enctype="multipart/form-data">
-                            <input type="file" name="file"/>
-                            <input type="submit" value="Lisää profiilikuva!" class="btn btn-primary"/>
-                        </form>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <a th:href="@{|/kayttajat/${path}/profilepic|}">
-                            <img th:src="@{/kayttajat/{path}/profilepic(path=${path})}" width="200" height="200">
-                        </a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-2">
-                        <form action="/deletepicture">
-                            <input type="submit" value="Poista profiilikuva" class="btn btn-primary"/>
-                        </form>
-                    </div>
-                </div>
-                <div>
-                    <div class="row">
-                        <div class="col-12">
-                            <p>
-                                Linkki muille näkyvään sivuusi:
-                                <a th:text="@{|/kayttajat/${path}|}" th:href="@{|/kayttajat/${path}|}">Linkki</a><br/>
-                            </p>
-                        </div>
+                        <p>
+                            Linkki muille näkyvään sivuusi:
+                            <a th:text="@{|/kayttajat/${path}|}" th:href="@{|/kayttajat/${path}|}">Linkki</a><br/>
+                        </p>
                     </div>
                 </div>
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <h3>Taidot:</h3>
-                    </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Taidot:</h3>
                 </div>
-                <div class="row">
-                    <div class="col-4">
-                        <form th:action="@{/addskill}" method="POST" class="form-inline my-2 my-lg-0">
-                            <input class="form-control" type="text" name="skill"/>
-                            <input type="submit" class="btn btn-outline-primary" value="Lisää taito!"/>            
-                        </form>
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <form th:action="@{/addskill}" method="POST" class="form-inline my-2 my-lg-0">
+                        <input class="form-control" type="text" name="skill"/>
+                        <input type="submit" class="btn btn-outline-primary" value="Lisää taito!"/>            
+                    </form>
                 </div>
-                <div class="row">
-                    <div class="col-11">
-                        <table class="table">
-                            <thead>
-                                <th scope="col"><h4>Taito</h4></th>
-                                <th scope="col"><h4>Kehut</h4></th>
-                            </thead>
-                            <tr th:each="s : ${skills}">
-                                <th> 
-                                    <span th:text="${s.text}">Skill</span>
-                                </th>
-                                <th> 
-                                    <span th:text="${s.likes}">Likes</span>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-11">
+                    <table class="table">
+                        <thead>
+                            <th scope="col"><h4>Taito</h4></th>
+                            <th scope="col"><h4>Kehut</h4></th>
+                        </thead>
+                        <tr th:each="s : ${skills}">
+                            <th> 
+                                <span th:text="${s.text}">Skill</span>
+                            </th>
+                            <th> 
+                                <span th:text="${s.likes}">Likes</span>
+                            </th>
+                            <th> 
+                                <form th:action="@{|mypage/${s.text}/remove|}">
+                                    <input type="submit" value="Poista" class="btn btn-primary"/>
+                                </form>
+                            </th>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>

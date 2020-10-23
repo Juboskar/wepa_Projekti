@@ -44,6 +44,7 @@ public class ProfileController {
         model.addAttribute("text", "");
         model.addAttribute("path", path);
         model.addAttribute("name", accountService.findNameByPath(path));
+        model.addAttribute("skills", accountService.findSkillsByPath(path));
         return "userpage";
     }
 
@@ -76,6 +77,7 @@ public class ProfileController {
         model.addAttribute("text", accountService.sendRequest(path));
         model.addAttribute("path", path);
         model.addAttribute("name", accountService.findNameByPath(path));
+        model.addAttribute("skills", accountService.findSkillsByPath(path));
         return "userpage";
     }
 
@@ -106,6 +108,12 @@ public class ProfileController {
     @PostMapping("/addskill")
     public String addSkill(@RequestParam String skill) {
         accountService.addSkill(skill);
+        return "redirect:/mypage";
+    }
+
+    @GetMapping("/mypage/{skill}/remove")
+    public String removeSkill(@PathVariable String skill) {
+        accountService.removeSkill(skill);
         return "redirect:/mypage";
     }
 }
