@@ -65,7 +65,7 @@ public class AccountService {
         for (Skill aLikedskill : aLikedskills) {
             this.dislikeSkill(aLikedskill.getOwner().getUserpath(), aLikedskill.getText());
         }
-        
+
         accountRepository.deleteById(a.getId());
     }
 
@@ -354,7 +354,7 @@ public class AccountService {
             this.dislikeSkill(account.getUserpath(), s.getText());
         }
         s.setLikes(likes);
-        
+
         skillRepository.delete(s);
 
     }
@@ -365,13 +365,15 @@ public class AccountService {
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
 
-        Skill s = skillRepository.findByOwnerAndText(b, skill);
-        List<Account> likes = s.getLikes();
-        if (!likes.contains(a)) {
-            likes.add(a);
+        if (!a.equals(b)) {
+            Skill s = skillRepository.findByOwnerAndText(b, skill);
+            List<Account> likes = s.getLikes();
+            if (!likes.contains(a)) {
+                likes.add(a);
+            }
+            s.setLikes(likes);
+            skillRepository.save(s);
         }
-        s.setLikes(likes);
-        skillRepository.save(s);
     }
 
     @Transactional
