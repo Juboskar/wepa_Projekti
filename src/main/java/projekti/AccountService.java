@@ -325,7 +325,8 @@ public class AccountService {
         return skills;
     }
 
-    Object findSkillsByPath(String path) {
+    @Transactional
+    public List<SkillDto> findSkillsByPath(String path) {
         Account a = accountRepository.findByUserpath(path);
 
         List<SkillDto> skills = new ArrayList<>();
