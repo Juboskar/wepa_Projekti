@@ -2,9 +2,13 @@ package projekti;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +34,7 @@ public class AccountService {
 
     @Transactional
     public void deleteAccount() {
-        //tämän metodin voisi toteuttaa paremmin parilla muutoksella tietokantaa
+        //tämä on spaghettia mutta toimii
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
 
@@ -344,10 +348,31 @@ public class AccountService {
     }
 
     @Transactional
+    public List<SkillDto> findTopSkillsByPath(String path) {
+        Account a = accountRepository.findByUserpath(path);
+
+        List<SkillDto> skills = new ArrayList<>();
+        
+        Pageable p = PageRequest.of(0, 3);
+        List<Skill> aSkills = skillRepository.findBySize(a, p);
+        aSkills.stream().map((s) -> {
+            SkillDto skillDto = new SkillDto();
+            skillDto.setText(s.getText());
+            skillDto.setLikes(s.getLikes().size());
+            return skillDto;
+        }).forEachOrdered((skillDto) -> {
+            skills.add(skillDto);
+        });
+
+        return skills;
+    }
+
+    @Transactional
     public void removeSkill(String skill) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
         Skill s = skillRepository.findByOwnerAndText(a, skill);
+
         List<Account> likes = s.getLikes();
         List<Account> cloned_likes = new ArrayList<>(likes);
         for (Account account : cloned_likes) {
@@ -390,4 +415,5 @@ public class AccountService {
         s.setLikes(likes);
         skillRepository.save(s);
     }
+
 }

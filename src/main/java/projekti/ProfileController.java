@@ -45,6 +45,7 @@ public class ProfileController {
         model.addAttribute("path", path);
         model.addAttribute("name", accountService.findNameByPath(path));
         model.addAttribute("skills", accountService.findSkillsByPath(path));
+        model.addAttribute("topskills", accountService.findTopSkillsByPath(path));
         return "userpage";
     }
 

@@ -32,6 +32,48 @@
 
             <div class="row">
                 <div class="col-11">
+                    <h2>Top 3 taidot:</h2>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-11">
+                    <table class="table">
+                        <thead>
+                            <th scope="col"><h4>Taito</h4></th>
+                            <th scope="col"><h4>Kehut</h4></th>
+                        </thead>
+                        <tr th:each="s : ${topskills}">
+                            <th> 
+                                <span th:text="${s.text}">Skill</span>
+                            </th>
+                            <th> 
+                                <span th:text="${s.likes}">Likes</span>
+                            </th>
+                            <th> 
+                                <form th:action="@{|/kayttajat/${path}/likeskill/${s.text}|}">
+                                    <input type="submit" value="Kehu!" class="btn btn-primary"/>
+                                </form>
+                            </th>
+                            <th> 
+                                <form th:action="@{|/kayttajat/${path}/dislikeskill/${s.text}|}">
+                                    <input type="submit" value="Poista kehu!" class="btn btn-primary"/>
+                                </form>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-11">
+                    <h2>Kaikki taidot:</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-11">
                     <table class="table">
                         <thead>
                             <th scope="col"><h4>Taito</h4></th>

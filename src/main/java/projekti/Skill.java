@@ -14,13 +14,14 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Skill extends AbstractPersistable<Long> { 
-    
+public class Skill extends AbstractPersistable<Long> {
+
     @ManyToOne
     private Account owner;
-    
+
     private String text;
-    
+
     @ManyToMany
     private List<Account> likes;
+
 }
