@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 public interface SkillRepository extends JpaRepository<Skill, Long> {
 
     public Skill findByOwnerAndText(Account a, String s);
-
+    
     public List<Skill> findAllByOwner(Account a);
-
+    
     @Query(value = "Select s from Skill s where s.owner=?1 order by s.likes.size desc")
     public List<Skill> findBySize(Account a, Pageable p);
 
