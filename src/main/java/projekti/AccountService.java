@@ -34,7 +34,7 @@ public class AccountService {
 
     @Transactional
     public void deleteAccount() {
-        //tämä on spaghettia mutta toimii
+        //tämä saattaa olla spaghettia mutta toimii ja oli ylimääräinen toiminto jota ei vaadittu!
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
 
@@ -65,9 +65,10 @@ public class AccountService {
             this.removeSkill(string);
         }
 
-        List<Skill> aLikedskills = a.getLikedskills();
-        for (Skill aLikedskill : aLikedskills) {
-            this.dislikeSkill(aLikedskill.getOwner().getUserpath(), aLikedskill.getText());
+        List<Skill> aLikedSkills = a.getLikedSkills();
+        List<Skill> cloned_aLikedSkills = new ArrayList<>(aLikedSkills);
+        for (Skill likedSkill : cloned_aLikedSkills) {
+            this.dislikeSkill(likedSkill.getOwner().getUserpath(), likedSkill.getText());
         }
 
         accountRepository.deleteById(a.getId());

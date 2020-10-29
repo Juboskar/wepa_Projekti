@@ -37,7 +37,7 @@ public class Account extends AbstractPersistable<Long> {
     private List<Skill> skills = new ArrayList<>();
     
     @ManyToMany(mappedBy="likes")
-    private List<Skill> Likedskills = new ArrayList<>();
+    private List<Skill> likedSkills = new ArrayList<>();
     
     @Lob
     @Basic(fetch = FetchType.LAZY)
