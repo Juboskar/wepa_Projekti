@@ -416,5 +416,4 @@ public class AccountService {
         s.setLikes(likes);
         skillRepository.save(s);
     }
-
 }
