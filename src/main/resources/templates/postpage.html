@@ -16,5 +16,22 @@
                 </div>
             </div>
         </div>
+        
+       <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Postaa: </h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <form th:action="@{/addpost}" method="POST" class="form-inline my-2 my-lg-0">
+                        <input class="form-control" type="text" name="post"/>
+                        <input type="submit" class="btn btn-outline-primary" value="Lisää postaus!"/>            
+                    </form>
+                </div>
+            </div>
+        </div>
+        
     </body>
 </html>

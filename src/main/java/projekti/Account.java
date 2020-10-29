@@ -32,13 +32,19 @@ public class Account extends AbstractPersistable<Long> {
 
     @ManyToMany
     private List<Account> waiting = new ArrayList<>();
-    
-    @OneToMany(mappedBy="owner")
+
+    @OneToMany(mappedBy = "owner")
     private List<Skill> skills = new ArrayList<>();
-    
-    @ManyToMany(mappedBy="likes")
+
+    @ManyToMany(mappedBy = "likes")
     private List<Skill> likedSkills = new ArrayList<>();
-    
+
+    @OneToMany(mappedBy = "owner")
+    private List<Post> posts = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "likes")
+    private List<Post> likedPosts = new ArrayList<>();
+
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private byte[] profilepic;

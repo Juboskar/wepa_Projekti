@@ -1,6 +1,7 @@
 package projekti;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -20,6 +21,9 @@ public class AccountService {
 
     @Autowired
     SkillRepository skillRepository;
+
+    @Autowired
+    PostRepository postRepository;
 
     public Account findByUsername(String username) {
         return accountRepository.findByUsername(username);
@@ -351,7 +355,7 @@ public class AccountService {
         Account a = accountRepository.findByUserpath(path);
 
         List<SkillDto> skills = new ArrayList<>();
-        
+
         Pageable p = PageRequest.of(0, 3);
         List<Skill> aSkills = skillRepository.findBySize(a, p);
         aSkills.stream().map((s) -> {
@@ -375,7 +379,7 @@ public class AccountService {
         List<Account> likes = s.getLikes();
         List<Account> cloned_likes = new ArrayList<>(likes);
         for (Account account : cloned_likes) {
-            
+
             this.dislikeSkill(account.getUsername(), a.getUserpath(), s.getText());
         }
         s.setLikes(likes);
@@ -415,4 +419,72 @@ public class AccountService {
         s.setLikes(likes);
         skillRepository.save(s);
     }
+
+    public void addPost(String newPost) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+
+        Post post = new Post();
+        post.setPostTime(LocalDateTime.now());
+        post.setText(newPost);
+        post.setOwner(a);
+        postRepository.save(post);
+
+    }
+
+    @Transactional
+    public List<PostDto> findPosts(String path) {
+        Account a = accountRepository.findByUserpath(path);
+
+        List<PostDto> posts = new ArrayList<>();
+        List<Post> aPosts = a.getPosts();
+        aPosts.stream().map((p) -> {
+            PostDto postDto = new PostDto();
+            postDto.setText(p.getText());
+            postDto.setLikes(p.getLikes().size());
+            postDto.setLocalDateTime(p.getPostTime());
+            postDto.setIdentifier(p.getId());
+            return postDto;
+        }).forEachOrdered((postDto) -> {
+            posts.add(postDto);
+        });
+
+        return posts;
+    }
+
+    @Transactional
+    public void likePost(String path, Long id) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        Account b = accountRepository.findByUserpath(path);
+
+        if (!a.equals(b)) {
+            Post p = postRepository.findPostById(id);
+
+            List<Account> likes = p.getLikes();
+            if (!likes.contains(a)) {
+                likes.add(a);
+            }
+            p.setLikes(likes);
+            postRepository.save(p);
+        }
+
+    }
+
+    @Transactional
+    public void dislikePost(String account, String path, Long id) {
+        Account a = accountRepository.findByUsername(account);
+        Account b = accountRepository.findByUserpath(path);
+
+        Post p = postRepository.findPostById(id);
+        List<Account> likes = p.getLikes();
+        List<Account> cloned_likes = new ArrayList<>(likes);
+        if (cloned_likes.contains(a)) {
+            likes.remove(a);
+        }
+        p.setLikes(likes);
+        postRepository.save(p);
+    }
+
 }

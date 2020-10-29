@@ -46,6 +46,7 @@ public class ProfileController {
         model.addAttribute("name", accountService.findNameByPath(path));
         model.addAttribute("skills", accountService.findSkillsByPath(path));
         model.addAttribute("topskills", accountService.findTopSkillsByPath(path));
+        model.addAttribute("posts", accountService.findPosts(path));
         return "userpage";
     }
 
@@ -79,6 +80,8 @@ public class ProfileController {
         model.addAttribute("path", path);
         model.addAttribute("name", accountService.findNameByPath(path));
         model.addAttribute("skills", accountService.findSkillsByPath(path));
+        model.addAttribute("topskills", accountService.findTopSkillsByPath(path));
+        model.addAttribute("posts", accountService.findPosts(path));
         return "userpage";
     }
 
@@ -121,16 +124,34 @@ public class ProfileController {
     @GetMapping("/kayttajat/{path}/likeskill/{skill}")
     public String likeSkill(@PathVariable String path, @PathVariable String skill, Model model) {
         accountService.likeSkill(path, skill);
-        model.addAttribute("path", path);
         return "redirect:/kayttajat/" + path;
     }
 
     @GetMapping("/kayttajat/{path}/dislikeskill/{skill}")
     public String dislikeSkill(@PathVariable String path, @PathVariable String skill, Model model) {
-        
+
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         accountService.dislikeSkill(username, path, skill);
-        model.addAttribute("path", path);
         return "redirect:/kayttajat/" + path;
     }
+
+    @PostMapping("/addpost")
+    public String addPost(@RequestParam String post) {
+        accountService.addPost(post);
+        return "redirect:/home";
+    }
+
+    @GetMapping("/kayttajat/{path}/likepost/{id}")
+    public String likePost(@PathVariable String path, @PathVariable Long id) {
+        accountService.likePost(path, id);
+        return "redirect:/kayttajat/" + path;
+    }
+
+    @GetMapping("/kayttajat/{path}/dislikepost/{id}")
+    public String dislikePost(@PathVariable String path, @PathVariable Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.dislikePost(username, path, id);
+        return "redirect:/kayttajat/" + path;
+    }
+
 }
