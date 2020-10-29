@@ -2,13 +2,11 @@ package projekti;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,7 +66,7 @@ public class AccountService {
         List<Skill> aLikedSkills = a.getLikedSkills();
         List<Skill> cloned_aLikedSkills = new ArrayList<>(aLikedSkills);
         for (Skill likedSkill : cloned_aLikedSkills) {
-            this.dislikeSkill(likedSkill.getOwner().getUserpath(), likedSkill.getText());
+            this.dislikeSkill(a.getUsername(), likedSkill.getOwner().getUserpath(), likedSkill.getText());
         }
 
         accountRepository.deleteById(a.getId());
@@ -377,7 +375,8 @@ public class AccountService {
         List<Account> likes = s.getLikes();
         List<Account> cloned_likes = new ArrayList<>(likes);
         for (Account account : cloned_likes) {
-            this.dislikeSkill(account.getUserpath(), s.getText());
+            
+            this.dislikeSkill(account.getUsername(), a.getUserpath(), s.getText());
         }
         s.setLikes(likes);
 
@@ -403,14 +402,14 @@ public class AccountService {
     }
 
     @Transactional
-    public void dislikeSkill(String path, String skill) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Account a = accountRepository.findByUsername(username);
+    public void dislikeSkill(String account, String path, String skill) {
+        Account a = accountRepository.findByUsername(account);
         Account b = accountRepository.findByUserpath(path);
 
         Skill s = skillRepository.findByOwnerAndText(b, skill);
         List<Account> likes = s.getLikes();
-        if (likes.contains(a)) {
+        List<Account> cloned_likes = new ArrayList<>(likes);
+        if (cloned_likes.contains(a)) {
             likes.remove(a);
         }
         s.setLikes(likes);

@@ -127,7 +127,9 @@ public class ProfileController {
 
     @GetMapping("/kayttajat/{path}/dislikeskill/{skill}")
     public String dislikeSkill(@PathVariable String path, @PathVariable String skill, Model model) {
-        accountService.dislikeSkill(path, skill);
+        
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.dislikeSkill(username, path, skill);
         model.addAttribute("path", path);
         return "redirect:/kayttajat/" + path;
     }
