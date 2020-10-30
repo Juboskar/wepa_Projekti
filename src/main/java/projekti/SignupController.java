@@ -30,7 +30,7 @@ public class SignupController {
 
     @GetMapping("/redirectlogin")
     public String signup() {
-        return "redirect:/welcome";
+        return "redirect:/home";
     }
 
     @PostMapping("/welcome")
