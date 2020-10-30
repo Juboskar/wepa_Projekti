@@ -34,7 +34,9 @@ public class ProfileController {
     @GetMapping("/mypage")
     public String mypage(Model model) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        model.addAttribute("path", accountService.findByUsername(username).getUserpath());
+        String path =  accountService.findByUsername(username).getUserpath();
+        model.addAttribute("path", path);
+        model.addAttribute("posts", accountService.findPosts(path));
         model.addAttribute("skills", accountService.findSkills());
         return "mypage";
     }
@@ -152,6 +154,12 @@ public class ProfileController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         accountService.dislikePost(username, path, id);
         return "redirect:/kayttajat/" + path;
+    }
+    
+    @GetMapping("/mypage/removepost/{id}")
+    public String removePost(@PathVariable Long id) {
+        accountService.removePost(id);
+        return "redirect:/mypage";
     }
 
 }

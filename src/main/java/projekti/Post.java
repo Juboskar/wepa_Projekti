@@ -2,7 +2,9 @@ package projekti;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -17,10 +19,12 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 public class Post extends AbstractPersistable<Long> {
 
     private LocalDateTime postTime;
-    
+
     @ManyToOne
     private Account owner;
 
+    @Lob
+    @Column(columnDefinition = "TEXT", length=1000000)
     private String text;
 
     @ManyToMany
@@ -28,5 +32,4 @@ public class Post extends AbstractPersistable<Long> {
 
 //    @ManyToMany
 //    private List<Post> comments;
-    
 }

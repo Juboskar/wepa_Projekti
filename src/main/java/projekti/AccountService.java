@@ -73,6 +73,22 @@ public class AccountService {
             this.dislikeSkill(a.getUsername(), likedSkill.getOwner().getUserpath(), likedSkill.getText());
         }
 
+        
+        List<Post> aPosts = a.getPosts();
+        List<Long> postIds = new ArrayList<>();
+        aPosts.forEach((aPost) -> {
+            postIds.add(aPost.getId());
+        });
+        for (Long id : postIds) {
+            this.removePost(id);
+        }
+
+        List<Post> aLikedPosts = a.getLikedPosts();
+        List<Post> cloned_aLikedPosts = new ArrayList<>(aLikedPosts);
+        for (Post likedPost : cloned_aLikedPosts) {
+            this.dislikePost(a.getUsername(), likedPost.getOwner().getUserpath(), likedPost.getId());
+        }
+        
         accountRepository.deleteById(a.getId());
     }
 
@@ -487,4 +503,21 @@ public class AccountService {
         postRepository.save(p);
     }
 
+    @Transactional
+    public void removePost(Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+        
+        Post p = postRepository.findPostById(id);
+
+        List<Account> likes = p.getLikes();
+        List<Account> cloned_likes = new ArrayList<>(likes);
+        for (Account account : cloned_likes) {
+            this.dislikePost(account.getUsername(), a.getUserpath(), p.getId());
+        }
+        p.setLikes(likes);
+        postRepository.delete(p);
+
+    }
+    
 }
