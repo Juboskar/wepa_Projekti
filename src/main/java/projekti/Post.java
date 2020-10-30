@@ -31,5 +31,5 @@ public class Post extends AbstractPersistable<Long> {
     private List<Account> likes;
 
 //    @ManyToMany
-//    private List<Post> comments;
+//    private List<Comment> comments;
 }
