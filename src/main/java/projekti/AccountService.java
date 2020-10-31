@@ -80,9 +80,9 @@ public class AccountService {
         List<Long> postIds = new ArrayList<>();
         aPosts.forEach((aPost) -> {
             postIds.add(aPost.getId());
-            aPost.getComments().clear();
         });
         for (Long id : postIds) {
+            postRepository.getOne(id).getComments().clear();
             this.removePost(id);
         }
 
