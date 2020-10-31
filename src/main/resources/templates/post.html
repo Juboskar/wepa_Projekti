@@ -11,5 +11,47 @@
         <div class="container">
             <div th:replace="fragments/layout :: h1(text='Postaus')"></div>
         </div>
+        
+        <div class="container">
+            <h4><span th:text="${post.text}">name</span></h4>
+        </div>
+        
+        <div class="container">
+        <div class="row">
+                <div class="col-11">
+                    <table class="table">
+                        <thead>
+                            <th scope="col"><h4>Kommentti</h4></th>
+                            <th scope="col"><h4>Aika</h4></th>
+                        </thead>
+                        <tr th:each="p : ${comments}">
+                            <th> 
+                                <span th:text="${p.text}">Postaus</span>
+                            </th>
+                            <th> 
+                                <span th:text="${p.commentTime}">Time</span>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+         <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Lisää kommentti: </h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <form th:action="@{|/post/${post.identifier}/comment|}" method="POST" class="form-inline my-2 my-lg-0">
+                        <input class="form-control" type="text" name="comment"/>
+                        <input type="submit" class="btn btn-outline-primary" value="Lisää kommentti!"/>            
+                    </form>
+                </div>
+            </div>
+        </div>
+        
     </body>
 </html>

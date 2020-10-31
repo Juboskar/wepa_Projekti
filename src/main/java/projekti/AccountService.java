@@ -25,6 +25,9 @@ public class AccountService {
     @Autowired
     PostRepository postRepository;
 
+    @Autowired
+    CommentRepository commentRepository;
+
     public Account findByUsername(String username) {
         return accountRepository.findByUsername(username);
     }
@@ -73,7 +76,6 @@ public class AccountService {
             this.dislikeSkill(a.getUsername(), likedSkill.getOwner().getUserpath(), likedSkill.getText());
         }
 
-        
         List<Post> aPosts = a.getPosts();
         List<Long> postIds = new ArrayList<>();
         aPosts.forEach((aPost) -> {
@@ -88,7 +90,7 @@ public class AccountService {
         for (Post likedPost : cloned_aLikedPosts) {
             this.dislikePost(a.getUsername(), likedPost.getOwner().getUserpath(), likedPost.getId());
         }
-        
+
         accountRepository.deleteById(a.getId());
     }
 
@@ -507,7 +509,7 @@ public class AccountService {
     public void removePost(Long id) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
-        
+
         Post p = postRepository.findPostById(id);
 
         List<Account> likes = p.getLikes();
@@ -519,5 +521,40 @@ public class AccountService {
         postRepository.delete(p);
 
     }
-    
+
+    @Transactional
+    public List<CommentDto> getComments(Long id) {
+        Post p = postRepository.getOne(id);
+        List<CommentDto> comments = new ArrayList<>();
+        
+        Pageable pageable = PageRequest.of(0, 10);
+        
+        List<Comment> commentsBypost = commentRepository.findRecent(p, pageable);
+        for (Comment comment : commentsBypost) {
+            CommentDto c = new CommentDto();
+            c.setText(comment.getText());
+            c.setCommentTime(comment.getCommentTime());
+            comments.add(c);
+        }
+        return comments;
+    }
+
+    @Transactional
+    public PostDto getPostById(Long id) {
+        Post p = postRepository.getOne(id);
+        PostDto post = new PostDto();
+        post.setIdentifier(id);
+        post.setText(p.getText());
+        return post;
+    }
+
+    @Transactional
+    public void comment(Long id, String comment) {
+        Post p = postRepository.getOne(id);
+        Comment c = new Comment();
+        c.setCommentTime(LocalDateTime.now());
+        c.setText(comment);
+        c.setPost(p);
+        commentRepository.save(c);
+    }
 }
