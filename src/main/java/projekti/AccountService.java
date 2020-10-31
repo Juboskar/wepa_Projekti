@@ -510,14 +510,20 @@ public class AccountService {
         Account a = accountRepository.findByUsername(username);
 
         Post p = postRepository.findPostById(id);
-        p.getComments().clear();
-        
+
         List<Account> likes = p.getLikes();
         List<Account> cloned_likes = new ArrayList<>(likes);
         for (Account account : cloned_likes) {
             this.dislikePost(account.getUsername(), a.getUserpath(), p.getId());
         }
         p.setLikes(likes);
+
+        List<Comment> comments = p.getComments();
+        List<Comment> cloned_comments = new ArrayList<>(comments);
+        for (Comment comment : cloned_comments) {
+            commentRepository.delete(comment);
+        }
+
         postRepository.delete(p);
 
     }
