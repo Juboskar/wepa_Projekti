@@ -80,6 +80,7 @@ public class AccountService {
         List<Long> postIds = new ArrayList<>();
         aPosts.forEach((aPost) -> {
             postIds.add(aPost.getId());
+            aPost.getComments().clear();
         });
         for (Long id : postIds) {
             this.removePost(id);
@@ -487,7 +488,6 @@ public class AccountService {
             p.setLikes(likes);
             postRepository.save(p);
         }
-
     }
 
     @Transactional
@@ -526,9 +526,9 @@ public class AccountService {
     public List<CommentDto> getComments(Long id) {
         Post p = postRepository.getOne(id);
         List<CommentDto> comments = new ArrayList<>();
-        
+
         Pageable pageable = PageRequest.of(0, 10);
-        
+
         List<Comment> commentsBypost = commentRepository.findRecent(p, pageable);
         for (Comment comment : commentsBypost) {
             CommentDto c = new CommentDto();
