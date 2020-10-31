@@ -82,7 +82,6 @@ public class AccountService {
             postIds.add(aPost.getId());
         });
         for (Long id : postIds) {
-            postRepository.getOne(id).getComments().clear();
             this.removePost(id);
         }
 
@@ -511,7 +510,8 @@ public class AccountService {
         Account a = accountRepository.findByUsername(username);
 
         Post p = postRepository.findPostById(id);
-
+        p.getComments().clear();
+        
         List<Account> likes = p.getLikes();
         List<Account> cloned_likes = new ArrayList<>(likes);
         for (Account account : cloned_likes) {
