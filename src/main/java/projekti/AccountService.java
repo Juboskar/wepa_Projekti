@@ -456,7 +456,7 @@ public class AccountService {
 
         List<PostDto> posts = new ArrayList<>();
         List<Post> aPosts = a.getPosts();
-        aPosts.stream().map((p) -> {
+        aPosts.stream().sorted().map((p) -> {
             PostDto postDto = new PostDto();
             postDto.setText(p.getText());
             postDto.setLikes(p.getLikes().size());
@@ -572,10 +572,11 @@ public class AccountService {
         List<PostDto> posts = new ArrayList<>();
         List<Post> aPosts = new ArrayList<>();
 
-        //tämä pitäisi tehdä varmaankin yhdellä kyselyllä
+        //tämä pitäisi tehdä varmaankin yhdellä kyselyllä, korjataan jos ehtii
         for (Account account : a.getFriends()) {
             aPosts.addAll(postRepository.findPostsByOwner(account));
         }
+        //
 
         aPosts.stream().sorted().map((p) -> {
             PostDto postDto = new PostDto();
