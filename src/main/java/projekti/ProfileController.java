@@ -19,7 +19,11 @@ public class ProfileController {
     AccountService accountService;
 
     @GetMapping("/home")
-    public String home() {
+    public String home(Model model) {
+         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String path = accountService.findByUsername(username).getUserpath();
+        model.addAttribute("posts", accountService.findFriendsPosts());
+        model.addAttribute("ownPosts", accountService.findPosts(path));
         return "postpage";
     }
 
@@ -156,6 +160,19 @@ public class ProfileController {
         return "redirect:/kayttajat/" + path;
     }
 
+    @GetMapping("/home/{path}/likepost/{id}")
+    public String likePostHomepage(@PathVariable String path, @PathVariable Long id) {
+        accountService.likePost(path, id);
+        return "redirect:/home";
+    }
+
+    @GetMapping("/home/{path}/dislikepost/{id}")
+    public String dislikePostHomepage(@PathVariable String path, @PathVariable Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.dislikePost(username, path, id);
+        return "redirect:/home";
+    }
+    
     @GetMapping("/mypage/removepost/{id}")
     public String removePost(@PathVariable Long id) {
         accountService.removePost(id);

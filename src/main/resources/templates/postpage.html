@@ -10,14 +10,9 @@
         </header>
         <div class="container">
             <div th:replace="fragments/layout :: h1(text='Etusivu')"></div>
-            <div class="row">
-                <div class="col-12">
-                    <p>Kaverien postaukset näkyvät myöhemmin täällä!</p>
-                </div>
-            </div>
         </div>
-        
-       <div class="container">
+
+        <div class="container">
             <div class="row">
                 <div class="col-12">
                     <h3>Postaa: </h3>
@@ -31,7 +26,96 @@
                     </form>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-4">
+                    <p>Voit hallinnoida postauksia omalla sivullasi</p>
+                </div>
+            </div>
         </div>
-        
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Kavereiden postaukset: </h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-11">
+                    <table class="table">
+                        <thead>
+                            <th scope="col"><h4>Julkaisija</h4></th>
+                            <th scope="col"><h4>Postaus</h4></th>
+                            <th scope="col"><h4>Tykkäykset</h4></th>
+                            <th scope="col"><h4>Aika</h4></th>
+                        </thead>
+                        <tr th:each="p : ${posts}">
+                            <th>
+                                <a th:text="${p.ownerName}" th:href="@{|/kayttajat/${p.ownerPath}|}"></a><br/>
+                            </th>
+                            <th> 
+                                <span th:text="${p.text}">Postaus</span>
+                            </th>
+                            <th> 
+                                <span th:text="${p.likes}">Likes</span>
+                            </th>
+                            <th> 
+                                <span th:text="${p.localDateTime}">Time</span>
+                            </th>
+                            <th> 
+                                <form th:action="@{|/home/${p.ownerPath}/likepost/${p.identifier}|}">
+                                    <input type="submit" value="Tykkää!" class="btn btn-primary"/>
+                                </form>
+                            </th>
+                            <th>
+                                <form th:action="@{|/home/${p.ownerPath}/dislikepost/${p.identifier}|}">
+                                    <input type="submit" value="Poista tykkäys!" class="btn btn-primary"/>
+                                </form>
+                            </th>
+                            <th>
+                                <form th:action="@{|/post/${p.identifier}|}">
+                                    <input type="submit" value="Näytä kommentit!" class="btn btn-primary"/>
+                                </form>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Omat postaukset: </h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-11">
+                    <table class="table">
+                        <thead>
+                            <th scope="col"><h4>Postaus</h4></th>
+                            <th scope="col"><h4>Tykkäykset</h4></th>
+                            <th scope="col"><h4>Aika</h4></th>
+                        </thead>
+                        <tr th:each="p : ${ownPosts}">
+                            <th> 
+                                <span th:text="${p.text}">Postaus</span>
+                            </th>
+                            <th> 
+                                <span th:text="${p.likes}">Likes</span>
+                            </th>
+                            <th> 
+                                <span th:text="${p.localDateTime}">Time</span>
+                            </th>
+                            <th>
+                                <form th:action="@{|/post/${p.identifier}|}">
+                                    <input type="submit" value="Näytä kommentit!" class="btn btn-primary"/>
+                                </form>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </body>
 </html>

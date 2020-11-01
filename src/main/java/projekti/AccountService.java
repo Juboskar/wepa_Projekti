@@ -563,4 +563,33 @@ public class AccountService {
         c.setPost(p);
         commentRepository.save(c);
     }
+
+    @Transactional
+    public List<PostDto> findFriendsPosts() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+
+        List<PostDto> posts = new ArrayList<>();
+        List<Post> aPosts = new ArrayList<>();
+
+        //tämä pitäisi tehdä varmaankin yhdellä kyselyllä
+        for (Account account : a.getFriends()) {
+            aPosts.addAll(postRepository.findPostsByOwner(account));
+        }
+
+        aPosts.stream().sorted().map((p) -> {
+            PostDto postDto = new PostDto();
+            postDto.setText(p.getText());
+            postDto.setLikes(p.getLikes().size());
+            postDto.setLocalDateTime(p.getPostTime());
+            postDto.setIdentifier(p.getId());
+            postDto.setOwnerName(p.getOwner().getName());
+            postDto.setOwnerPath(p.getOwner().getUserpath());
+            return postDto;
+        }).forEachOrdered((postDto) -> {
+            posts.add(postDto);
+        });
+
+        return posts;
+    }
 }

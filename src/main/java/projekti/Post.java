@@ -17,7 +17,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Post extends AbstractPersistable<Long> {
+public class Post extends AbstractPersistable<Long> implements Comparable<Post> {
 
     private LocalDateTime postTime;
 
@@ -25,7 +25,7 @@ public class Post extends AbstractPersistable<Long> {
     private Account owner;
 
     @Lob
-    @Column(columnDefinition = "TEXT", length=1000000)
+    @Column(columnDefinition = "TEXT", length = 1000000)
     private String text;
 
     @ManyToMany
@@ -33,4 +33,15 @@ public class Post extends AbstractPersistable<Long> {
 
     @OneToMany(mappedBy = "post")
     private List<Comment> comments;
+
+    @Override
+    public int compareTo(Post p) {
+        if (this.getPostTime().isAfter(p.getPostTime())) {
+            return 1;
+        }
+        if (this.getPostTime().isBefore(p.getPostTime())) {
+            return -1;
+        }
+        return 0;
+    }
 }

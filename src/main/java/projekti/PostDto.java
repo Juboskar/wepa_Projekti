@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 public class PostDto extends AbstractPersistable<Long> {
     
     private String ownerName;
+    private String ownerPath;
     private String text;
     private int likes;
     private long identifier;
