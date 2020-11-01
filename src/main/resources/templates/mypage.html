@@ -125,7 +125,7 @@
                             <th scope="col"><h4>Tykkäykset</h4></th>
                             <th scope="col"><h4>Aika</h4></th>
                         </thead>
-                        <tr th:each="p : ${posts}">
+                        <tr th:each="p : ${likedPosts}">
                             <th>
                                 <a th:text="${p.ownerName}" th:href="@{|/kayttajat/${p.ownerPath}|}"></a><br/>
                             </th>
