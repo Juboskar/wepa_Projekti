@@ -37,10 +37,10 @@ public class Post extends AbstractPersistable<Long> implements Comparable<Post> 
     @Override
     public int compareTo(Post p) {
         if (this.getPostTime().isAfter(p.getPostTime())) {
-            return 1;
+            return -1;
         }
         if (this.getPostTime().isBefore(p.getPostTime())) {
-            return -1;
+            return 1;
         }
         return 0;
     }
