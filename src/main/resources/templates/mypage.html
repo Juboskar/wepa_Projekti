@@ -139,7 +139,7 @@
                                 <span th:text="${p.localDateTime}">Time</span>
                             </th>
                             <th> 
-                                <form th:action="@{|/mypage/dislikepost/${p.identifier}|}">
+                                <form th:action="@{|/mypage/dislikepost/${p.ownerPath}/${p.identifier}|}">
                                     <input type="submit" value="Poista tykkäys!" class="btn btn-primary"/>
                                 </form>
                             </th>

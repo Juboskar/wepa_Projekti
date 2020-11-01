@@ -154,7 +154,7 @@ public class ProfileController {
         return "redirect:/kayttajat/" + path;
     }
 
-    @GetMapping("/mypage/dislikepost/{id}")
+    @GetMapping("/mypage/dislikepost/{path}/{id}")
     public String dislikePost(@PathVariable String path, @PathVariable Long id) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         accountService.dislikePost(username, path, id);
