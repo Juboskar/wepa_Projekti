@@ -110,6 +110,49 @@
                 </div>
             </div>
             
+            <div class="row">
+                <div class="col-12">
+                    <h3>Tykkäämäsi postaukset:</h3>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-11">
+                    <table class="table">
+                        <thead>
+                            <th scope="col"><h4>Julkaisija</h4></th>
+                            <th scope="col"><h4>Postaus</h4></th>
+                            <th scope="col"><h4>Tykkäykset</h4></th>
+                            <th scope="col"><h4>Aika</h4></th>
+                        </thead>
+                        <tr th:each="p : ${posts}">
+                            <th>
+                                <a th:text="${p.ownerName}" th:href="@{|/kayttajat/${p.ownerPath}|}"></a><br/>
+                            </th>
+                            <th> 
+                                <span th:text="${p.text}">Postaus</span>
+                            </th>
+                            <th> 
+                                <span th:text="${p.likes}">Likes</span>
+                            </th>
+                            <th> 
+                                <span th:text="${p.localDateTime}">Time</span>
+                            </th>
+                            <th> 
+                                <form th:action="@{|/mypage/dislikepost/${p.identifier}|}">
+                                    <input type="submit" value="Tykkää!" class="btn btn-primary"/>
+                                </form>
+                            </th>
+                            <th>
+                                <form th:action="@{|/post/${p.identifier}|}">
+                                    <input type="submit" value="Näytä kommentit!" class="btn btn-primary"/>
+                                </form>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
         </div>
     </body>
 </html>

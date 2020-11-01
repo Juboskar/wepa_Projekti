@@ -471,6 +471,26 @@ public class AccountService {
     }
 
     @Transactional
+    public List<PostDto> findLikedPosts(String path) {
+        Account a = accountRepository.findByUserpath(path);
+
+        List<PostDto> posts = new ArrayList<>();
+        List<Post> aPosts = a.getLikedPosts();
+        aPosts.stream().sorted().map((p) -> {
+            PostDto postDto = new PostDto();
+            postDto.setText(p.getText());
+            postDto.setLikes(p.getLikes().size());
+            postDto.setLocalDateTime(p.getPostTime());
+            postDto.setIdentifier(p.getId());
+            return postDto;
+        }).forEachOrdered((postDto) -> {
+            posts.add(postDto);
+        });
+
+        return posts;
+    }
+
+    @Transactional
     public void likePost(String path, Long id) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -593,4 +613,5 @@ public class AccountService {
 
         return posts;
     }
+
 }
