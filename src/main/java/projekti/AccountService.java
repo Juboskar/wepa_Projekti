@@ -476,7 +476,9 @@ public class AccountService {
             postDto.setText(p.getText());
             postDto.setLikes(p.getLikes().size());
             postDto.setLocalDateTime(p.getPostTime());
-            postDto.setIdentifier(p.getId());
+            postDto.setIdentifier(p.getId());      
+            postDto.setOwnerName(p.getOwner().getName());
+            postDto.setOwnerPath(p.getOwner().getUserpath());
             return postDto;
         }).forEachOrdered((postDto) -> {
             posts.add(postDto);
