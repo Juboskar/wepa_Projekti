@@ -16,4 +16,6 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
     @Query(value = "Select s from Skill s where s.owner=?1 order by s.likes.size desc")
     public List<Skill> findBySize(Account a, Pageable p);
 
+    public Skill findOneById(Long skill);
+
 }

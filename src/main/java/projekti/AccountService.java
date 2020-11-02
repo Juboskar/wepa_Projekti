@@ -62,18 +62,18 @@ public class AccountService {
         }
 
         List<Skill> aSkills = a.getSkills();
-        List<String> strings = new ArrayList<>();
+        List<Long> ids = new ArrayList<>();
         aSkills.forEach((aSkill) -> {
-            strings.add(aSkill.getText());
+            ids.add(aSkill.getId());
         });
-        for (String string : strings) {
-            this.removeSkill(string);
+        for (Long id : ids) {
+            this.removeSkill(id);
         }
 
         List<Skill> aLikedSkills = a.getLikedSkills();
         List<Skill> cloned_aLikedSkills = new ArrayList<>(aLikedSkills);
         for (Skill likedSkill : cloned_aLikedSkills) {
-            this.dislikeSkill(a.getUsername(), likedSkill.getOwner().getUserpath(), likedSkill.getText());
+            this.dislikeSkill(a.getUsername(), likedSkill.getId());
         }
 
         List<Post> aPosts = a.getPosts();
@@ -317,18 +317,11 @@ public class AccountService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
 
-        List<String> strings = new ArrayList<>();
-        List<Skill> aSkills = a.getSkills();
-        aSkills.forEach((aSkill) -> {
-            strings.add(aSkill.getText());
-        });
+        Skill skill = new Skill();
+        skill.setText(newSkill);
+        skill.setOwner(a);
+        skillRepository.save(skill);
 
-        if (!strings.contains(newSkill)) {
-            Skill skill = new Skill();
-            skill.setText(newSkill);
-            skill.setOwner(a);
-            skillRepository.save(skill);
-        }
     }
 
     @Transactional
@@ -341,6 +334,7 @@ public class AccountService {
         aSkills.stream().map((s) -> {
             SkillDto skillDto = new SkillDto();
             skillDto.setText(s.getText());
+            skillDto.setIdentifier(s.getId());
             skillDto.setLikes(s.getLikes().size());
             return skillDto;
         }).forEachOrdered((skillDto) -> {
@@ -359,6 +353,7 @@ public class AccountService {
         aSkills.stream().map((s) -> {
             SkillDto skillDto = new SkillDto();
             skillDto.setText(s.getText());
+            skillDto.setIdentifier(s.getId());
             skillDto.setLikes(s.getLikes().size());
             return skillDto;
         }).forEachOrdered((skillDto) -> {
@@ -379,6 +374,7 @@ public class AccountService {
         aSkills.stream().map((s) -> {
             SkillDto skillDto = new SkillDto();
             skillDto.setText(s.getText());
+            skillDto.setIdentifier(s.getId());
             skillDto.setLikes(s.getLikes().size());
             return skillDto;
         }).forEachOrdered((skillDto) -> {
@@ -389,16 +385,16 @@ public class AccountService {
     }
 
     @Transactional
-    public void removeSkill(String skill) {
+    public void removeSkill(Long skill) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
-        Skill s = skillRepository.findByOwnerAndText(a, skill);
+        Skill s = skillRepository.findOneById(skill);
 
         List<Account> likes = s.getLikes();
         List<Account> cloned_likes = new ArrayList<>(likes);
         for (Account account : cloned_likes) {
 
-            this.dislikeSkill(account.getUsername(), a.getUserpath(), s.getText());
+            this.dislikeSkill(account.getUsername(), s.getId());
         }
         s.setLikes(likes);
 
@@ -407,13 +403,13 @@ public class AccountService {
     }
 
     @Transactional
-    public void likeSkill(String path, String skill) {
+    public void likeSkill(String path, Long skill) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
 
         if (!a.equals(b)) {
-            Skill s = skillRepository.findByOwnerAndText(b, skill);
+            Skill s = skillRepository.findOneById(skill);
             List<Account> likes = s.getLikes();
             if (!likes.contains(a)) {
                 likes.add(a);
@@ -424,11 +420,10 @@ public class AccountService {
     }
 
     @Transactional
-    public void dislikeSkill(String account, String path, String skill) {
+    public void dislikeSkill(String account, Long skill) {
         Account a = accountRepository.findByUsername(account);
-        Account b = accountRepository.findByUserpath(path);
-
-        Skill s = skillRepository.findByOwnerAndText(b, skill);
+ 
+        Skill s = skillRepository.findOneById(skill);
         List<Account> likes = s.getLikes();
         List<Account> cloned_likes = new ArrayList<>(likes);
         if (cloned_likes.contains(a)) {

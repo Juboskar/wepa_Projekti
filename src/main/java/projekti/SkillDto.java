@@ -21,4 +21,6 @@ public class SkillDto extends AbstractPersistable<Long> {
     private String text;
     private int likes;
     
+    private Long identifier;
+    
 }

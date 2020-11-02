@@ -73,7 +73,7 @@
                                 <span th:text="${s.likes}">Likes</span>
                             </th>
                             <th> 
-                                <form th:action="@{|mypage/${s.text}/remove|}">
+                                <form th:action="@{|mypage/${s.identifier}/remove|}">
                                     <input type="submit" value="Poista taito" class="btn btn-primary"/>
                                 </form>
                             </th>

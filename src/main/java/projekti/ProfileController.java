@@ -122,23 +122,23 @@ public class ProfileController {
         return "redirect:/mypage";
     }
 
-    @GetMapping("/mypage/{skill}/remove")
-    public String removeSkill(@PathVariable String skill) {
-        accountService.removeSkill(skill);
+    @GetMapping("/mypage/{id}/remove")
+    public String removeSkill(@PathVariable Long id) {
+        accountService.removeSkill(id);
         return "redirect:/mypage";
     }
 
-    @GetMapping("/kayttajat/{path}/likeskill/{skill}")
-    public String likeSkill(@PathVariable String path, @PathVariable String skill, Model model) {
-        accountService.likeSkill(path, skill);
+    @GetMapping("/kayttajat/{path}/likeskill/{id}")
+    public String likeSkill(@PathVariable String path, @PathVariable Long id, Model model) {
+        accountService.likeSkill(path, id);
         return "redirect:/kayttajat/" + path;
     }
 
-    @GetMapping("/kayttajat/{path}/dislikeskill/{skill}")
-    public String dislikeSkill(@PathVariable String path, @PathVariable String skill, Model model) {
+    @GetMapping("/kayttajat/{path}/dislikeskill/{id}")
+    public String dislikeSkill(@PathVariable String path, @PathVariable Long id, Model model) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        accountService.dislikeSkill(username, path, skill);
+        accountService.dislikeSkill(username, id);
         return "redirect:/kayttajat/" + path;
     }
 
