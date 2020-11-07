@@ -28,7 +28,7 @@ public class Account extends AbstractPersistable<Long> {
     private List<Account> friends = new ArrayList<>();
 
     @ManyToMany
-    private List<Account> sended = new ArrayList<>();
+    private List<Account> sent = new ArrayList<>();
 
     @ManyToMany
     private List<Account> waiting = new ArrayList<>();

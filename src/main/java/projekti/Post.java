@@ -1,6 +1,7 @@
 package projekti;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,10 +30,10 @@ public class Post extends AbstractPersistable<Long> implements Comparable<Post> 
     private String text;
 
     @ManyToMany
-    private List<Account> likes;
+    private List<Account> likes =  new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<Comment> comments;
+    private List<Comment> comments  = new ArrayList<>();
 
     @Override
     public int compareTo(Post p) {

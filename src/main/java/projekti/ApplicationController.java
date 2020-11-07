@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-public class ProfileController {
+public class ApplicationController {
 
     @Autowired
     AccountService accountService;
 
     @GetMapping("/home")
     public String home(Model model) {
-         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         String path = accountService.findByUsername(username).getUserpath();
         model.addAttribute("posts", accountService.findFriendsPosts());
         model.addAttribute("ownPosts", accountService.findPosts(path));
@@ -29,9 +29,10 @@ public class ProfileController {
 
     @GetMapping("/friends")
     public String friends(Model model) {
-        model.addAttribute("friends", accountService.findFriends());
-        model.addAttribute("waiting", accountService.findWaiting());
-        model.addAttribute("sended", accountService.findSended());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        model.addAttribute("friends", accountService.findFriends(username));
+        model.addAttribute("waiting", accountService.findWaiting(username));
+        model.addAttribute("sended", accountService.findSent(username));
         return "friends";
     }
 
@@ -42,7 +43,7 @@ public class ProfileController {
         model.addAttribute("path", path);
         model.addAttribute("posts", accountService.findPosts(path));
         model.addAttribute("likedPosts", accountService.findLikedPosts(path));
-        model.addAttribute("skills", accountService.findSkills());
+        model.addAttribute("skills", accountService.findSkillsByUsername(username));
         return "mypage";
     }
 
@@ -83,7 +84,8 @@ public class ProfileController {
 
     @GetMapping("/kayttajat/{path}/sendrequest")
     public String sendFriendRequest(@PathVariable String path, Model model) {
-        model.addAttribute("text", accountService.sendRequest(path));
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        model.addAttribute("text", accountService.sendRequest(path, username));
         model.addAttribute("path", path);
         model.addAttribute("name", accountService.findNameByPath(path));
         model.addAttribute("skills", accountService.findSkillsByPath(path));
@@ -94,49 +96,55 @@ public class ProfileController {
 
     @GetMapping("/kayttajat/{path}/accept")
     public String acceptFriendRequest(@PathVariable String path) {
-        accountService.acceptRequest(path);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.acceptRequest(path, username);
         return "redirect:/friends";
     }
 
     @GetMapping("/kayttajat/{path}/reject")
     public String rejectFriendRequest(@PathVariable String path) {
-        accountService.rejectRequest(path);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.rejectRequest(path, username);
         return "redirect:/friends";
     }
 
     @GetMapping("/kayttajat/{path}/remove")
     public String removeFriend(@PathVariable String path) {
-        accountService.removeFriend(path);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.removeFriend(path, username);
         return "redirect:/friends";
     }
 
     @GetMapping("/kayttajat/{path}/cancel")
     public String cancelFriendRequest(@PathVariable String path) {
-        accountService.cancelFriend(path);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.cancelFriend(path, username);
         return "redirect:/friends";
     }
 
     @PostMapping("/addskill")
     public String addSkill(@RequestParam String skill) {
-        accountService.addSkill(skill);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.addSkill(skill, username);
         return "redirect:/mypage";
     }
 
     @GetMapping("/mypage/{id}/remove")
     public String removeSkill(@PathVariable Long id) {
-        accountService.removeSkill(id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.removeSkill(id, username);
         return "redirect:/mypage";
     }
 
     @GetMapping("/kayttajat/{path}/likeskill/{id}")
     public String likeSkill(@PathVariable String path, @PathVariable Long id, Model model) {
-        accountService.likeSkill(path, id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.likeSkill(path, id, username);
         return "redirect:/kayttajat/" + path;
     }
 
     @GetMapping("/kayttajat/{path}/dislikeskill/{id}")
     public String dislikeSkill(@PathVariable String path, @PathVariable Long id, Model model) {
-
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         accountService.dislikeSkill(username, id);
         return "redirect:/kayttajat/" + path;
@@ -144,13 +152,15 @@ public class ProfileController {
 
     @PostMapping("/addpost")
     public String addPost(@RequestParam String post) {
-        accountService.addPost(post);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.addPost(post, username);
         return "redirect:/home";
     }
 
     @GetMapping("/kayttajat/{path}/likepost/{id}")
     public String likePost(@PathVariable String path, @PathVariable Long id) {
-        accountService.likePost(path, id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.likePost(username, path, id);
         return "redirect:/kayttajat/" + path;
     }
 
@@ -163,11 +173,11 @@ public class ProfileController {
 
     @GetMapping("/home/{path}/likepost/{id}")
     public String likePostHomepage(@PathVariable String path, @PathVariable Long id) {
-        accountService.likePost(path, id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        accountService.likePost(username, path, id);
         return "redirect:/home";
     }
 
-    
     @GetMapping("/mypage/removepost/{id}")
     public String removePost(@PathVariable Long id) {
         accountService.removePost(id);
@@ -180,11 +190,10 @@ public class ProfileController {
         model.addAttribute("comments", accountService.getComments(id));
         return "post";
     }
-    
+
     @PostMapping("/post/{id}/comment")
     public String commentPost(@PathVariable Long id, @RequestParam String comment) {
         accountService.comment(id, comment);
-        
         return "redirect:/post/" + id;
     }
 }

@@ -1,5 +1,6 @@
 package projekti;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -22,6 +23,6 @@ public class Skill extends AbstractPersistable<Long> {
     private String text;
 
     @ManyToMany
-    private List<Account> likes;
+    private List<Account> likes = new ArrayList<>();
 
 }

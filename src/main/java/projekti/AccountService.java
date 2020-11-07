@@ -37,63 +37,6 @@ public class AccountService {
         return a.getName();
     }
 
-    @Transactional
-    public void deleteAccount() {
-        //tämä saattaa olla spaghettia mutta toimii ja oli ylimääräinen toiminto jota ei vaadittu!
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Account a = accountRepository.findByUsername(username);
-
-        List<Account> aFriends = a.getFriends();
-        List<Account> cloned_aFriends = new ArrayList<>(aFriends);
-        for (Account b : cloned_aFriends) {
-            this.removeFriend(b.getUserpath());
-        }
-
-        List<Account> aSended = a.getSended();
-        List<Account> cloned_aSended = new ArrayList<>(aSended);
-        for (Account b : cloned_aSended) {
-            this.cancelFriend(b.getUserpath());
-        }
-
-        List<Account> aWaiting = a.getWaiting();
-        List<Account> cloned_aWaiting = new ArrayList<>(aWaiting);
-        for (Account b : cloned_aWaiting) {
-            this.rejectRequest(b.getUserpath());
-        }
-
-        List<Skill> aSkills = a.getSkills();
-        List<Long> ids = new ArrayList<>();
-        aSkills.forEach((aSkill) -> {
-            ids.add(aSkill.getId());
-        });
-        for (Long id : ids) {
-            this.removeSkill(id);
-        }
-
-        List<Skill> aLikedSkills = a.getLikedSkills();
-        List<Skill> cloned_aLikedSkills = new ArrayList<>(aLikedSkills);
-        for (Skill likedSkill : cloned_aLikedSkills) {
-            this.dislikeSkill(a.getUsername(), likedSkill.getId());
-        }
-
-        List<Post> aPosts = a.getPosts();
-        List<Long> postIds = new ArrayList<>();
-        aPosts.forEach((aPost) -> {
-            postIds.add(aPost.getId());
-        });
-        for (Long id : postIds) {
-            this.removePost(id);
-        }
-
-        List<Post> aLikedPosts = a.getLikedPosts();
-        List<Post> cloned_aLikedPosts = new ArrayList<>(aLikedPosts);
-        for (Post likedPost : cloned_aLikedPosts) {
-            this.dislikePost(a.getUsername(), likedPost.getOwner().getUserpath(), likedPost.getId());
-        }
-
-        accountRepository.deleteById(a.getId());
-    }
-
     public boolean save(String username, String encodedPassword, String name, String path) {
         if (accountRepository.findByUsername(username) == null && accountRepository.findByUserpath(path) == null) {
             Account a = new Account();
@@ -130,8 +73,7 @@ public class AccountService {
     }
 
     @Transactional
-    public List<ProfileDto> findFriends() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public List<ProfileDto> findFriends(String username) {
         Account a = accountRepository.findByUsername(username);
         List<ProfileDto> friends = new ArrayList<>();
         a.getFriends().stream().map((b) -> {
@@ -146,8 +88,7 @@ public class AccountService {
     }
 
     @Transactional
-    public List<ProfileDto> findWaiting() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public List<ProfileDto> findWaiting(String username) {
         Account a = accountRepository.findByUsername(username);
         List<ProfileDto> waiting = new ArrayList<>();
         a.getWaiting().stream().map((b) -> {
@@ -162,19 +103,18 @@ public class AccountService {
     }
 
     @Transactional
-    public List<ProfileDto> findSended() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public List<ProfileDto> findSent(String username) {
         Account a = accountRepository.findByUsername(username);
-        List<ProfileDto> sended = new ArrayList<>();
-        a.getSended().stream().map((b) -> {
+        List<ProfileDto> sent = new ArrayList<>();
+        a.getSent().stream().map((b) -> {
             ProfileDto profile = new ProfileDto();
             profile.setName(b.getName());
             profile.setUserpath(b.getUserpath());
             return profile;
         }).forEachOrdered((profile) -> {
-            sended.add(profile);
+            sent.add(profile);
         });
-        return sended;
+        return sent;
     }
 
     @Transactional
@@ -192,16 +132,17 @@ public class AccountService {
         return results;
     }
 
+    //tästä mieluummin joku tyyliin bindingresult
     @Transactional
-    public String sendRequest(String path) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public String sendRequest(String path, String username) {
+
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
         if (a.getUsername().equals(b.getUsername())) {
             return "Et voi lisätä itseäsi";
         }
         List<Account> aFriends = a.getFriends();
-        List<Account> aSended = a.getSended();
+        List<Account> aSended = a.getSent();
         List<Account> aWaiting = a.getWaiting();
         if (aFriends.contains(b)) {
             return "Olette jo kavereita";
@@ -213,7 +154,7 @@ public class AccountService {
             return "Käyttäjä on jo lähettänyt sinulle pyynnön. Voit hyväksyä sen kaverisivullasi";
         }
         aSended.add(b);
-        a.setSended(aSended);
+        a.setSent(aSended);
         List<Account> bWaiting = b.getWaiting();
         bWaiting.add(a);
         b.setWaiting(bWaiting);
@@ -223,15 +164,14 @@ public class AccountService {
     }
 
     @Transactional
-    public void acceptRequest(String path) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public void acceptRequest(String path, String username) {
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
 
         List<Account> aWaiting = a.getWaiting();
-        List<Account> bSended = b.getSended();
+        List<Account> bSent = b.getSent();
 
-        if (aWaiting.contains(b) & bSended.contains(a)) {
+        if (aWaiting.contains(b) & bSent.contains(a)) {
 
             List<Account> aFriends = a.getFriends();
             List<Account> bFriends = b.getFriends();
@@ -244,36 +184,34 @@ public class AccountService {
 
             bFriends.add(a);
             b.setFriends(bFriends);
-            bSended.remove(a);
-            b.setSended(bSended);
+            bSent.remove(a);
+            b.setSent(bSent);
             accountRepository.save(b);
         }
     }
 
     @Transactional
-    public void rejectRequest(String path) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public void rejectRequest(String path, String username) {
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
 
         List<Account> aWaiting = a.getWaiting();
-        List<Account> bSended = b.getSended();
+        List<Account> bSent = b.getSent();
 
-        if (aWaiting.contains(b) & bSended.contains(a)) {
+        if (aWaiting.contains(b) & bSent.contains(a)) {
 
             aWaiting.remove(b);
             a.setWaiting(aWaiting);
             accountRepository.save(a);
 
-            bSended.remove(a);
-            b.setSended(bSended);
+            bSent.remove(a);
+            b.setSent(bSent);
             accountRepository.save(b);
         }
     }
 
     @Transactional
-    public void removeFriend(String path) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public void removeFriend(String path, String username) {
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
 
@@ -292,43 +230,28 @@ public class AccountService {
     }
 
     @Transactional
-    public void cancelFriend(String path) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Account b = accountRepository.findByUsername(username);
-        Account a = accountRepository.findByUserpath(path);
+    public void cancelFriend(String path, String username) {
+        Account a = accountRepository.findByUsername(username);
+        Account b = accountRepository.findByUserpath(path);
 
-        List<Account> bSended = b.getSended();
-        List<Account> aWaiting = a.getWaiting();
+        List<Account> aSent = a.getSent();
+        List<Account> bWaiting = b.getWaiting();
 
-        if (aWaiting.contains(b) & bSended.contains(a)) {
+        if (bWaiting.contains(a) & aSent.contains(b)) {
 
-            bSended.remove(a);
-            b.setSended(bSended);
-            accountRepository.save(b);
-
-            aWaiting.remove(b);
-            a.setWaiting(aWaiting);
+            aSent.remove(b);
+            a.setSent(aSent);
             accountRepository.save(a);
+
+            bWaiting.remove(a);
+            b.setWaiting(bWaiting);
+            accountRepository.save(b);
         }
     }
 
     @Transactional
-    public void addSkill(String newSkill) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public List<SkillDto> findSkillsByUsername(String username) {
         Account a = accountRepository.findByUsername(username);
-
-        Skill skill = new Skill();
-        skill.setText(newSkill);
-        skill.setOwner(a);
-        skillRepository.save(skill);
-
-    }
-
-    @Transactional
-    public List<SkillDto> findSkills() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Account a = accountRepository.findByUsername(username);
-
         List<SkillDto> skills = new ArrayList<>();
         List<Skill> aSkills = a.getSkills();
         aSkills.stream().map((s) -> {
@@ -340,8 +263,16 @@ public class AccountService {
         }).forEachOrdered((skillDto) -> {
             skills.add(skillDto);
         });
-
         return skills;
+    }
+
+    @Transactional
+    public void addSkill(String newSkill, String username) {
+        Account a = accountRepository.findByUsername(username);
+        Skill skill = new Skill();
+        skill.setText(newSkill);
+        skill.setOwner(a);
+        skillRepository.save(skill);
     }
 
     @Transactional
@@ -385,8 +316,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void removeSkill(Long skill) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public void removeSkill(Long skill, String username) {
         Account a = accountRepository.findByUsername(username);
         Skill s = skillRepository.findOneById(skill);
 
@@ -403,8 +333,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void likeSkill(String path, Long skill) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public void likeSkill(String path, Long skill, String username) {
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
 
@@ -420,9 +349,8 @@ public class AccountService {
     }
 
     @Transactional
-    public void dislikeSkill(String account, Long skill) {
-        Account a = accountRepository.findByUsername(account);
- 
+    public void dislikeSkill(String username, Long skill) {
+        Account a = accountRepository.findByUsername(username);
         Skill s = skillRepository.findOneById(skill);
         List<Account> likes = s.getLikes();
         List<Account> cloned_likes = new ArrayList<>(likes);
@@ -433,8 +361,7 @@ public class AccountService {
         skillRepository.save(s);
     }
 
-    public void addPost(String newPost) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public void addPost(String newPost, String username) {
         Account a = accountRepository.findByUsername(username);
 
         Post post = new Post();
@@ -466,31 +393,8 @@ public class AccountService {
     }
 
     @Transactional
-    public List<PostDto> findLikedPosts(String path) {
-        Account a = accountRepository.findByUserpath(path);
+    public void likePost(String username, String path, Long id) {
 
-        List<PostDto> posts = new ArrayList<>();
-        List<Post> aPosts = a.getLikedPosts();
-        aPosts.stream().sorted().map((p) -> {
-            PostDto postDto = new PostDto();
-            postDto.setText(p.getText());
-            postDto.setLikes(p.getLikes().size());
-            postDto.setLocalDateTime(p.getPostTime());
-            postDto.setIdentifier(p.getId());      
-            postDto.setOwnerName(p.getOwner().getName());
-            postDto.setOwnerPath(p.getOwner().getUserpath());
-            return postDto;
-        }).forEachOrdered((postDto) -> {
-            posts.add(postDto);
-        });
-
-        return posts;
-    }
-
-    @Transactional
-    public void likePost(String path, Long id) {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
 
@@ -507,8 +411,8 @@ public class AccountService {
     }
 
     @Transactional
-    public void dislikePost(String account, String path, Long id) {
-        Account a = accountRepository.findByUsername(account);
+    public void dislikePost(String username, String path, Long id) {
+        Account a = accountRepository.findByUsername(username);
         Account b = accountRepository.findByUserpath(path);
 
         Post p = postRepository.findPostById(id);
@@ -521,6 +425,29 @@ public class AccountService {
         postRepository.save(p);
     }
 
+    @Transactional
+    public List<PostDto> findLikedPosts(String path) {
+        Account a = accountRepository.findByUserpath(path);
+
+        List<PostDto> posts = new ArrayList<>();
+        List<Post> aPosts = a.getLikedPosts();
+        aPosts.stream().sorted().map((p) -> {
+            PostDto postDto = new PostDto();
+            postDto.setText(p.getText());
+            postDto.setLikes(p.getLikes().size());
+            postDto.setLocalDateTime(p.getPostTime());
+            postDto.setIdentifier(p.getId());
+            postDto.setOwnerName(p.getOwner().getName());
+            postDto.setOwnerPath(p.getOwner().getUserpath());
+            return postDto;
+        }).forEachOrdered((postDto) -> {
+            posts.add(postDto);
+        });
+
+        return posts;
+    }
+
+    
     @Transactional
     public void removePost(Long id) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -609,6 +536,63 @@ public class AccountService {
         });
 
         return posts;
+    }
+
+    @Transactional
+    public void deleteAccount() {
+        //tämä saattaa olla huonoa koodia mutta toimii ja oli ylimääräinen toiminto jota ei vaadittu!
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account a = accountRepository.findByUsername(username);
+
+        List<Account> aFriends = a.getFriends();
+        List<Account> cloned_aFriends = new ArrayList<>(aFriends);
+        for (Account b : cloned_aFriends) {
+            this.removeFriend(b.getUserpath(), username);
+        }
+
+        List<Account> aSended = a.getSent();
+        List<Account> cloned_aSended = new ArrayList<>(aSended);
+        for (Account b : cloned_aSended) {
+            this.cancelFriend(b.getUserpath(), username);
+        }
+
+        List<Account> aWaiting = a.getWaiting();
+        List<Account> cloned_aWaiting = new ArrayList<>(aWaiting);
+        for (Account b : cloned_aWaiting) {
+            this.rejectRequest(b.getUserpath(), username);
+        }
+
+        List<Skill> aSkills = a.getSkills();
+        List<Long> ids = new ArrayList<>();
+        aSkills.forEach((aSkill) -> {
+            ids.add(aSkill.getId());
+        });
+        for (Long id : ids) {
+            this.removeSkill(id, username);
+        }
+
+        List<Skill> aLikedSkills = a.getLikedSkills();
+        List<Skill> cloned_aLikedSkills = new ArrayList<>(aLikedSkills);
+        for (Skill likedSkill : cloned_aLikedSkills) {
+            this.dislikeSkill(a.getUsername(), likedSkill.getId());
+        }
+
+        List<Post> aPosts = a.getPosts();
+        List<Long> postIds = new ArrayList<>();
+        aPosts.forEach((aPost) -> {
+            postIds.add(aPost.getId());
+        });
+        for (Long id : postIds) {
+            this.removePost(id);
+        }
+
+        List<Post> aLikedPosts = a.getLikedPosts();
+        List<Post> cloned_aLikedPosts = new ArrayList<>(aLikedPosts);
+        for (Post likedPost : cloned_aLikedPosts) {
+            this.dislikePost(a.getUsername(), likedPost.getOwner().getUserpath(), likedPost.getId());
+        }
+
+        accountRepository.deleteById(a.getId());
     }
 
 }
